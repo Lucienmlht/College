@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>📚 Collège + Trading</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F6F3;--bg2:#fff;--text:#1A1A1A;--muted:#787878;
+  --border:#E8E8E5;--blue:#2B6CB0;--green:#276749;--orange:#C05621;
+  --purple:#553C9A;--red:#C53030;--check:#48BB78;
+  --tag-blue:#EBF4FF;--tag-green:#F0FFF4;--tag-orange:#FFFAF0;
+  --tag-purple:#FAF5FF;--tag-red:#FFF5F5;
+  --r:12px;--sh:0 2px 8px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);font-size:15px;}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);display:flex;z-index:200;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 16px rgba(0,0,0,.06);}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 2px 8px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none;gap:3px;}
+.ni.on{color:var(--blue);}
+.ni-icon{font-size:22px;line-height:1;}
+
+/* PAGES */
+.page{display:none;padding:20px 16px 100px;max-width:500px;margin:0 auto;}
+.page.on{display:block;}
+.pg-icon{font-size:38px;display:block;margin-bottom:6px;}
+.pg-title{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px;}
+.pg-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+
+/* TODAY HEADER */
+.today-hdr{background:linear-gradient(135deg,#1A365D,#2B6CB0);border-radius:16px;padding:18px 20px;color:#fff;margin-bottom:20px;box-shadow:0 4px 20px rgba(43,108,176,.25);}
+.today-date{font-size:11px;opacity:.7;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;}
+.today-day{font-size:24px;font-weight:700;margin-bottom:2px;}
+.today-time{font-family:'JetBrains Mono',monospace;font-size:13px;opacity:.8;}
+.today-bdg{display:inline-block;background:rgba(255,255,255,.2);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;margin-top:8px;}
+.today-bdg.red{background:rgba(255,80,80,.3);}
+
+/* BLOCS ACCORDÉON */
+.day-blocks{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+.bloc{background:var(--bg2);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);}
+.bloc-hdr{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;user-select:none;}
+.bloc-bar{width:4px;border-radius:4px;align-self:stretch;min-height:22px;flex-shrink:0;}
+.bloc-ico{font-size:20px;}
+.bloc-inf{flex:1;}
+.bloc-tit{font-size:14px;font-weight:700;line-height:1.2;}
+.bloc-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px;}
+.bloc-arr{font-size:18px;color:var(--muted);transition:transform .2s;line-height:1;}
+.bloc-arr.open{transform:rotate(90deg);}
+.bloc-body{display:none;padding:0 14px 12px;}
+.bloc-body.open{display:block;}
+
+/* WEEKEND */
+.weekend-card{background:linear-gradient(135deg,#744210,#C05621);border-radius:16px;padding:24px 20px;color:#fff;text-align:center;margin-bottom:20px;}
+.weekend-card h2{font-size:22px;font-weight:700;margin-bottom:8px;}
+.weekend-card p{font-size:14px;opacity:.85;}
+
+/* QUICK CARDS */
+.qcards{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.qcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:transform .15s;box-shadow:var(--sh);}
+.qcard:active{transform:scale(.96);}
+.qcard-ico{font-size:26px;margin-bottom:8px;}
+.qcard-tit{font-size:13px;font-weight:700;}
+.qcard-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* SEC */
+.sec{margin-bottom:24px;}
+.sec-hd{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--border);}
+.sec-hd h2{font-size:17px;font-weight:700;}
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:auto;}
+.badge-blue{background:var(--tag-blue);color:var(--blue);}
+.badge-green{background:var(--tag-green);color:var(--green);}
+
+/* CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:8px;}
+.chk{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;box-shadow:var(--sh);transition:all .2s;}
+.chk.done{opacity:.5;background:#F9FFF9;border-color:#9AE6B4;}
+.chk-top{display:flex;align-items:center;gap:12px;}
+.chk-box{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:13px;}
+.chk-box.checked{background:var(--check);border-color:var(--check);color:#fff;}
+.chk-label{flex:1;font-size:14px;font-weight:500;line-height:1.4;}
+.chk.done .chk-label{text-decoration:line-through;color:var(--muted);}
+.chk-dur{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);background:#F0EFE9;padding:3px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0;}
+
+/* TIMERS */
+.chk-bot{display:flex;align-items:center;gap:8px;margin-top:10px;}
+.btn-go{color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex:1;}
+.btn-go:disabled{background:#A0AEC0!important;cursor:not-allowed;}
+.tdisp{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;min-width:58px;text-align:right;}
+.tdisp.urgent{color:var(--red)!important;}
+.pbar{height:4px;background:#E2E8F0;border-radius:4px;margin-top:10px;overflow:hidden;}
+.pfill{height:100%;border-radius:4px;transition:width .5s linear;}
+.pfill.urgent{background:var(--red)!important;}
+
+/* ALERT */
+.alert{background:var(--tag-red);border:1px solid #FC8181;border-radius:var(--r);padding:12px 14px;font-size:13px;color:var(--red);font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+
+/* PLANNING TABLE */
+.plan-table{width:100%;border-collapse:collapse;font-size:12px;}
+.plan-table th{background:#F0EFE9;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border:1px solid var(--border);text-align:left;}
+.plan-table td{padding:9px 10px;border:1px solid var(--border);background:var(--bg2);vertical-align:top;}
+.dn{font-weight:700;font-size:13px;margin-bottom:2px;}
+.mono{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+.pill{display:inline-flex;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;margin:2px 2px 2px 0;}
+.pb{background:var(--tag-blue);color:var(--blue);}
+.pg{background:var(--tag-green);color:var(--green);}
+.po{background:var(--tag-orange);color:var(--orange);}
+.pp{background:var(--tag-purple);color:var(--purple);}
+.pr{background:var(--tag-red);color:var(--red);}
+.pgr{background:#F0EFE9;color:var(--muted);}
+.pus{background:#E6FFFA;color:#276749;font-weight:700;}
+
+/* TRADING */
+.trade-card{background:linear-gradient(135deg,#1A365D,#2B6CB0);border-radius:16px;padding:20px;color:#fff;margin-bottom:14px;box-shadow:0 4px 20px rgba(43,108,176,.25);}
+.trade-card h3{font-size:18px;font-weight:700;margin-bottom:6px;}
+.trade-card p{font-size:13px;opacity:.8;margin-bottom:16px;}
+.btn-chrome{display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;color:#1A365D;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;width:100%;}
+.yt-note{background:#FFF3CD;border-left:3px solid #ECC94B;border-radius:8px;padding:12px 14px;font-size:13px;color:#744210;margin-bottom:16px;}
+
+/* DEVOIRS */
+.db-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--border);}
+.db-table{width:100%;border-collapse:collapse;font-size:13px;}
+.db-table th{background:#F0EFE9;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:9px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;}
+.db-table td{padding:11px 12px;border-bottom:1px solid var(--border);background:var(--bg2);vertical-align:middle;}
+.db-table tr:last-child td{border-bottom:none;}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;}
+.d-done{background:var(--check);}
+.d-todo{background:#FC8181;}
+.d-prog{background:#F6AD55;}
+
+/* BOUTON CLAUDE */
+.claude-box{background:linear-gradient(135deg,#0D1117,#1a1a2e);border-radius:16px;padding:20px;margin-bottom:16px;}
+.claude-box h3{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px;}
+.claude-box p{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:16px;line-height:1.6;}
+.btn-claude{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#D97757,#c96942);border:none;border-radius:10px;padding:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-bottom:10px;}
+.btn-claude:active{opacity:.85;}
+.copy-hint{font-size:11px;color:rgba(255,255,255,.45);text-align:center;}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:#1A365D;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;transition:transform .3s;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* BOUTON CLAUDE */
+.btn-claude{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#D97757,#c96942);border:none;border-radius:10px;padding:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;}
+.pap-card{background:linear-gradient(135deg,#1a3a5c,#1e6b5e);border-radius:16px;padding:20px;color:#fff;margin-bottom:14px;}
+.pap-card h3{font-size:18px;font-weight:700;margin-bottom:6px;}
+.pap-card p{font-size:13px;opacity:.8;margin-bottom:16px;line-height:1.6;}
+.btn-pap{display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;color:#1a3a5c;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;}
+
+/* DEVOIRS FORM */
+.mat-btn,.date-btn{border:none;border-radius:20px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:transform .1s,box-shadow .1s;}
+.mat-btn:active,.date-btn:active{transform:scale(.95);}
+.mat-btn.sel,.date-btn.sel{box-shadow:0 0 0 2px var(--blue),0 0 0 4px rgba(43,108,176,.2);}
+.date-btn{background:#F0EFE9;color:var(--muted);}
+.date-btn.sel{background:var(--tag-blue);color:var(--blue);}
+/* DEVOIR CARD */
+.dv-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;box-shadow:var(--sh);}
+.dv-card.dv-fait{opacity:.5;background:#F9FFF9;border-color:#9AE6B4;}
+.dv-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.dv-mat{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;}
+.dv-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;}
+.dv-travail{font-size:14px;font-weight:500;margin-bottom:8px;line-height:1.4;}
+.dv-statut{display:flex;gap:6px;align-items:center;}
+.stat-btn{border:none;border-radius:20px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;opacity:.45;transition:opacity .15s;}
+.stat-btn.on{opacity:1;}
+.stat-fait{background:var(--tag-green);color:var(--green);}
+.stat-non{background:var(--tag-red);color:var(--red);}
+.stat-enc{background:var(--tag-orange);color:var(--orange);}
+.dv-del{margin-left:auto;background:none;border:none;font-size:16px;cursor:pointer;opacity:.3;padding:2px 6px;}
+.dv-del:hover{opacity:.7;}
+.tip-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;font-size:13px;}
+.tip-box strong{display:block;margin-bottom:6px;font-size:14px;}
+.tip-box div{color:var(--muted);line-height:1.8;}
+
+/* DONE MSG */
+.done-msg{background:var(--tag-green);border:1px solid #9AE6B4;border-radius:var(--r);padding:14px;font-size:14px;font-weight:700;color:var(--green);text-align:center;display:none;margin-top:14px;}
+
+/* BLOC COLORS */
+.c-bus{background:#718096;}
+.c-gouter{background:#ED8936;}
+.c-devoirs{background:#4299E1;}
+.c-trading{background:#38A169;}
+.c-us{background:#2F855A;}
+.c-sac{background:#805AD5;}
+.c-douche{background:#E53E3E;}
+.c-libre{background:#A0AEC0;}
+.c-bilan{background:#2B6CB0;}
+
+/* FILTRE DEVOIRS */
+.filter-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.f-btn{border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;background:#F0EFE9;color:var(--muted);transition:all .15s;}
+.f-btn.on{background:var(--blue);color:#fff;}
+
+/* NOTES / MOYENNES */
+.note-mat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:var(--sh);margin-bottom:10px;}
+.note-mat-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.note-mat-name{font-size:14px;font-weight:700;flex:1;}
+.note-moy{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;}
+.note-moy.good{color:var(--green);}
+.note-moy.ok{color:var(--orange);}
+.note-moy.bad{color:var(--red);}
+.note-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.note-chip{background:#F0EFE9;border-radius:8px;padding:5px 10px;font-size:13px;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:6px;}
+.note-chip-del{background:none;border:none;cursor:pointer;font-size:12px;opacity:.4;padding:0;}
+.note-add-row{display:flex;gap:8px;}
+.note-inp{flex:1;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit;outline:none;background:var(--bg);min-width:0;}
+.note-add-btn{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.avg-bar{height:6px;background:#E2E8F0;border-radius:6px;overflow:hidden;margin-top:8px;}
+.avg-fill{height:100%;border-radius:6px;transition:width .4s;}
+.moy-globale{background:linear-gradient(135deg,#1A365D,#2B6CB0);border-radius:16px;padding:18px 20px;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:16px;}
+.moy-glob-val{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:700;}
+.moy-glob-info{flex:1;}
+.moy-glob-info div:first-child{font-size:13px;opacity:.7;margin-bottom:2px;}
+.moy-glob-info div:last-child{font-size:12px;opacity:.55;}
+
+/* COUNTDOWN */
+.countdown-card{background:linear-gradient(135deg,#2D3748,#4A5568);border-radius:16px;padding:20px;color:#fff;margin-bottom:14px;}
+.countdown-card h3{font-size:16px;font-weight:700;margin-bottom:14px;opacity:.8;}
+.cd-blocks{display:flex;gap:10px;justify-content:center;margin-bottom:14px;}
+.cd-block{background:rgba(255,255,255,.15);border-radius:10px;padding:12px 16px;text-align:center;min-width:60px;}
+.cd-num{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;line-height:1;}
+.cd-lbl{font-size:10px;opacity:.6;margin-top:4px;text-transform:uppercase;letter-spacing:.05em;}
+.cd-name{text-align:center;font-size:13px;opacity:.7;}
+.cd-edit{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:8px 12px;font-size:13px;font-family:inherit;width:100%;margin-top:10px;outline:none;}
+
+/* NOTIF TOGGLE */
+.notif-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh);margin-bottom:10px;}
+.notif-row{display:flex;align-items:center;gap:12px;}
+.notif-info{flex:1;}
+.notif-title{font-size:14px;font-weight:600;margin-bottom:2px;}
+.notif-desc{font-size:12px;color:var(--muted);}
+.toggle{width:46px;height:26px;background:#E2E8F0;border-radius:20px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;border:none;}
+.toggle.on{background:var(--check);}
+.toggle::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle.on::after{transform:translateX(20px);}
+
+/* MENU PLUS */
+.plus-list{display:flex;flex-direction:column;gap:10px;}
+.plus-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;box-shadow:var(--sh);}
+.plus-item:active{transform:scale(.98);}
+.plus-ico{font-size:24px;}
+.plus-lbl{font-size:14px;font-weight:600;flex:1;}
+.plus-arr{color:var(--muted);font-size:18px;}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast">✅ Prompt copié ! Ouvre Claude et colle-le.</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="ni on"    onclick="go('home')">    <span class="ni-icon">🏠</span>Accueil</button>
+  <button class="ni"       onclick="go('devoirs')"> <span class="ni-icon">📝</span>Devoirs</button>
+  <button class="ni"       onclick="go('notes')">   <span class="ni-icon">⭐</span>Notes</button>
+  <button class="ni"       onclick="go('trading')"> <span class="ni-icon">📈</span>Trading</button>
+  <button class="ni"       onclick="go('plus')">    <span class="ni-icon">☰</span>Plus</button>
+</nav>
+
+<!-- ══════ ACCUEIL ══════ -->
+<div id="pg-home" class="page on">
+  <div class="today-hdr" id="today-hdr">
+    <div class="today-date" id="today-date"></div>
+    <div class="today-day"  id="today-day"></div>
+    <div class="today-time" id="today-time"></div>
+    <div id="today-bdg"></div>
+  </div>
+  <div class="day-blocks" id="day-blocks"></div>
+  <div class="qcards">
+    <div class="qcard" onclick="go('devoirs')"><div class="qcard-ico">📝</div><div class="qcard-tit">Devoirs</div><div class="qcard-desc">+ aide Claude</div></div>
+    <div class="qcard" onclick="go('trading')" style="background:linear-gradient(135deg,#EBF4FF,#fff);"><div class="qcard-ico">📈</div><div class="qcard-tit">Trading</div><div class="qcard-desc">Ouvrir le site</div></div>
+    <div class="qcard" onclick="go('routine')" style="background:linear-gradient(135deg,#F0FFF4,#fff);"><div class="qcard-ico">⏱️</div><div class="qcard-tit">Routine</div><div class="qcard-desc">Timers du soir</div></div>
+    <div class="qcard" onclick="go('papillon')" style="background:linear-gradient(135deg,#E6FFFA,#fff);"><div class="qcard-ico">🏫</div><div class="qcard-tit">Ecole Directe</div><div class="qcard-desc">Notes & cours</div></div>
+  </div>
+</div>
+
+<!-- ══════ PLANNING ══════ -->
+<div id="pg-planning" class="page">
+  <span class="pg-icon">📅</span>
+  <h1 class="pg-title">Planning de la semaine</h1>
+  <p class="pg-sub">Trajet bus ~25 min inclus · Tout avant 19h</p>
+  <div class="alert">🚿 Douche avant 19h00 tous les soirs !</div>
+  <div style="overflow-x:auto;">
+  <table class="plan-table">
+    <thead><tr><th>Jour</th><th>Arrivée</th><th>Programme</th></tr></thead>
+    <tbody>
+      <tr><td><div class="dn">🟦 Lundi</div></td><td><span class="mono">🏠 17h25</span></td><td>
+        <span class="pill pgr">🚌 17h–17h25</span><span class="pill po">🍎 17h25–17h45</span><span class="pill pb">📝 17h45–18h35</span><span class="pill pg">📈 18h35–18h45</span><span class="pill pp">🎒 18h45–18h50</span><span class="pill pr">🚿 18h50–19h</span>
+      </td></tr>
+      <tr><td><div class="dn">🟦 Mardi</div></td><td><span class="mono">🏠 17h25</span></td><td>
+        <span class="pill pgr">🚌 17h–17h25</span><span class="pill po">🍎 17h25–17h45</span><span class="pill pb">📝 17h45–18h35</span><span class="pill pg">📈 18h35–18h45</span><span class="pill pp">🎒 18h45–18h50</span><span class="pill pr">🚿 18h50–19h</span>
+      </td></tr>
+      <tr><td><div class="dn">🟩 Mercredi</div><div class="mono">🇺🇸 Session US</div></td><td><span class="mono">🏠 12h55</span></td><td>
+        <span class="pill pgr">🚌 12h30–12h55</span><span class="pill po">🍽️ 12h55–13h30</span><span class="pill pb">📝 13h30–15h</span><span class="pill pgr">☕ 15h–15h30</span><span class="pill pus">📈 15h30–17h30 🇺🇸</span><span class="pill pg">📊 17h30–17h40</span><span class="pill pgr">🎮 17h40–18h30</span><span class="pill pp">🎒 18h30–18h45</span><span class="pill pr">🚿 18h45–19h</span>
+      </td></tr>
+      <tr><td><div class="dn">🟦 Jeudi A</div></td><td><span class="mono">🏠 17h25</span></td><td>
+        <span class="pill pgr">🚌 17h–17h25</span><span class="pill po">🍎 17h25–17h45</span><span class="pill pb">📝 17h45–18h35</span><span class="pill pg">📈 18h35–18h45</span><span class="pill pp">🎒 18h45–18h50</span><span class="pill pr">🚿 18h50–19h</span>
+      </td></tr>
+      <tr><td><div class="dn">🟦 Jeudi B</div></td><td><span class="mono">🏠 18h25</span></td><td>
+        <span class="pill pgr">🚌 18h–18h25</span><span class="pill po">🍎 18h25–18h35</span><span class="pill pp">🎒 18h35–18h45</span><span class="pill pr">🚿 18h45–19h !</span><span class="pill pgr">📝 devoirs → ven.</span>
+      </td></tr>
+      <tr><td><div class="dn">🟨 Vendredi</div></td><td><span class="mono">🏠 16h25</span></td><td>
+        <span class="pill pgr">🚌 16h–16h25</span><span class="pill po">🍎 16h25–16h45</span><span class="pill pb">📝 16h45–17h45</span><span class="pill pg">📈 17h45–18h</span><span class="pill pgr">🎮 18h–18h30</span><span class="pill pp">🎒 18h30–18h45</span><span class="pill pr">🚿 18h45–19h</span>
+      </td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ══════ DEVOIRS ══════ -->
+<div id="pg-devoirs" class="page">
+  <span class="pg-icon">📝</span>
+  <h1 class="pg-title">Devoirs</h1>
+  <p class="pg-sub">Ajoute tes devoirs et envoie-les à Claude</p>
+
+  <div class="sec">
+    <div class="sec-hd"><span>🗄️</span><h2>Mes devoirs</h2><span class="badge badge-green">Modifiable</span></div>
+
+    <!-- FORMULAIRE AJOUT -->
+    <div id="add-form" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:12px;display:none;">
+      <div style="font-size:13px;font-weight:700;margin-bottom:12px;">➕ Nouveau devoir</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;">📚 Matière</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;" id="matiere-btns">
+            <button class="mat-btn" onclick="selMat(this,'Maths','pb')" style="background:var(--tag-blue);color:var(--blue);">Maths</button>
+            <button class="mat-btn" onclick="selMat(this,'Français','pp')" style="background:var(--tag-purple);color:var(--purple);">Français</button>
+            <button class="mat-btn" onclick="selMat(this,'Histoire-Géo','po')" style="background:var(--tag-orange);color:var(--orange);">Histoire-Géo</button>
+            <button class="mat-btn" onclick="selMat(this,'SVT','pg')" style="background:var(--tag-green);color:var(--green);">SVT</button>
+            <button class="mat-btn" onclick="selMat(this,'Anglais','pb')" style="background:var(--tag-blue);color:var(--blue);">Anglais</button>
+            <button class="mat-btn" onclick="selMat(this,'Physique','pr')" style="background:var(--tag-red);color:var(--red);">Physique</button>
+            <button class="mat-btn" onclick="selMat(this,'Espagnol','po')" style="background:var(--tag-orange);color:var(--orange);">Espagnol</button>
+            <button class="mat-btn" onclick="selMat(this,'Techno','pgr')" style="background:#F0EFE9;color:var(--muted);">Techno</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;">✏️ Travail à faire</div>
+          <input id="new-travail" type="text" placeholder="Ex: Exercices p.47 n°3,4,5" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;outline:none;background:var(--bg);">
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;">📅 Pour quand</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;" id="date-btns">
+            <button class="date-btn" onclick="selDate(this,'Lundi')">Lundi</button>
+            <button class="date-btn" onclick="selDate(this,'Mardi')">Mardi</button>
+            <button class="date-btn" onclick="selDate(this,'Mercredi')">Mercredi</button>
+            <button class="date-btn" onclick="selDate(this,'Jeudi')">Jeudi</button>
+            <button class="date-btn" onclick="selDate(this,'Vendredi')">Vendredi</button>
+            <button class="date-btn" onclick="selDate(this,'Demain')">Demain</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px;">
+          <button onclick="addDevoir()" style="flex:1;background:var(--blue);color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">✅ Ajouter</button>
+          <button onclick="toggleForm()" style="background:#F0EFE9;color:var(--muted);border:none;border-radius:8px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Annuler</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOUTON AJOUTER -->
+    <button onclick="toggleForm()" id="btn-add-devoir" style="width:100%;background:var(--bg2);border:2px dashed var(--border);border-radius:var(--r);padding:13px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;margin-bottom:12px;">➕ Ajouter un devoir</button>
+
+    <!-- FILTRES -->
+    <div class="filter-row">
+      <button class="f-btn on" onclick="setFilter('tous',this)">Tous</button>
+      <button class="f-btn" onclick="setFilter('non',this)">❌ Pas fait</button>
+      <button class="f-btn" onclick="setFilter('enc',this)">⏳ En cours</button>
+      <button class="f-btn" onclick="setFilter('fait',this)">✅ Faits</button>
+    </div>
+    <div id="devoirs-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div id="devoirs-empty" style="text-align:center;color:var(--muted);padding:20px;font-size:13px;">Aucun devoir pour l'instant 🎉</div>
+
+    <!-- BOUTON CLAUDE avec les devoirs -->
+    <div id="claude-devoirs-box" style="margin-top:14px;display:none;">
+      <button class="btn-claude" onclick="openClaudeWithDevoirs()">
+        🤖 Demander l'aide de Claude →
+      </button>
+      <div style="color:var(--muted);font-size:11px;text-align:center;margin-top:6px;">Tes devoirs non faits sont envoyés automatiquement 📋</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TRADING ══════ -->
+<div id="pg-trading" class="page">
+  <span class="pg-icon">📈</span>
+  <h1 class="pg-title">Trading</h1>
+  <p class="pg-sub">Accès rapide à mon site</p>
+  <div class="trade-card">
+    <h3>📊 Mon Site de Trading</h3>
+    <p>Journal de trading + calendrier économique</p>
+    <a href="https://scalp-zella-m4oppyj3t-lulumichallet-5182s-projects.vercel.app" target="_blank" class="btn-chrome">🌐 Ouvrir dans Chrome</a>
+  </div>
+  <div class="yt-note">⏳ <strong>Attendre ~1 minute</strong> pour que la base de données se réveille.</div>
+  <div class="sec">
+    <div class="sec-hd"><span>📋</span><h2>Pas d'opportunité ?</h2></div>
+    <div class="checklist">
+      <div class="chk" id="tr1"><div class="chk-top"><div class="chk-box" onclick="chk('tr1')"></div><span class="chk-label">📝 Devoirs en avance</span></div></div>
+      <div class="chk" id="tr2"><div class="chk-top"><div class="chk-box" onclick="chk('tr2')"></div><span class="chk-label">📖 Révision d'une leçon</span></div></div>
+      <div class="chk" id="tr3"><div class="chk-top"><div class="chk-box" onclick="chk('tr3')"></div><span class="chk-label">📈 Analyser les graphiques</span></div></div>
+      <div class="chk" id="tr4"><div class="chk-top"><div class="chk-box" onclick="chk('tr4')"></div><span class="chk-label">🎒 Préparer le sac</span></div></div>
+      <div class="chk" id="tr5"><div class="chk-top"><div class="chk-box" onclick="chk('tr5')"></div><span class="chk-label">🎮 Temps libre</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ ROUTINE EN RENTRANT ══════ -->
+<div id="pg-routine" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+    <button onclick="go('plus')" style="background:none;border:none;font-size:22px;cursor:pointer;padding:0;">‹</button>
+    <div>
+      <h1 style="font-size:22px;font-weight:700;" id="routine-title">⏱️ Routine en rentrant</h1>
+      <div style="font-size:13px;color:var(--muted);" id="routine-sub">Timers pour aujourd'hui</div>
+    </div>
+  </div>
+  <div class="alert">🚿 Tout terminé avant <strong>19h00</strong> !</div>
+  <div class="checklist" id="routine-list"></div>
+  <div class="done-msg" id="all-done">🎉 Tout bouclé avant 19h ! Bonne soirée 🎉</div>
+</div>
+
+<!-- ══════ ECOLE DIRECTE ══════ -->
+<div id="pg-papillon" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+    <button onclick="go('plus')" style="background:none;border:none;font-size:22px;cursor:pointer;padding:0;">‹</button>
+    <h1 style="font-size:22px;font-weight:700;">🏫 Ecole Directe</h1>
+  </div>
+  <div class="pap-card">
+    <h3>🏫 Ouvrir Ecole Directe</h3>
+    <p>Accède directement à l'application pour voir tes notes, devoirs et messages de tes profs.</p>
+    <button class="btn-pap" onclick="openEcoleDirecte()">📱 Ouvrir l'application</button>
+  </div>
+  <div class="tip-box">
+    <strong>💡 Icône rapide sur l'écran d'accueil</strong>
+    <div>1. Ouvre dans Samsung Internet<br>2. Menu ☰ → "Ajouter à l'écran d'accueil"<br>3. Accès en 1 tap 📱</div>
+  </div>
+</div>
+
+<!-- ══════ NOTES / MOYENNES ══════ -->
+<div id="pg-notes" class="page">
+  <span class="pg-icon">⭐</span>
+  <h1 class="pg-title">Mes Notes</h1>
+  <p class="pg-sub">Saisis tes notes → moyenne auto</p>
+  <div class="moy-globale">
+    <div class="moy-glob-val" id="moy-glob-val">—</div>
+    <div class="moy-glob-info">
+      <div>Moyenne générale</div>
+      <div id="moy-glob-sub" style="font-size:12px;opacity:.6;">Ajoute des notes pour commencer</div>
+    </div>
+  </div>
+  <div id="notes-matieres"></div>
+  <button onclick="addMatiere()" style="width:100%;background:var(--bg2);border:2px dashed var(--border);border-radius:var(--r);padding:13px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;margin-top:4px;">➕ Ajouter une matière</button>
+</div>
+
+<!-- ══════ PLUS ══════ -->
+<div id="pg-plus" class="page">
+  <span class="pg-icon">☰</span>
+  <h1 class="pg-title">Plus</h1>
+  <p class="pg-sub">Autres fonctionnalités</p>
+
+  <div class="sec">
+    <div class="sec-hd"><span>⏳</span><h2>Prochaines vacances</h2></div>
+    <div class="countdown-card">
+      <h3>📅 Compte à rebours</h3>
+      <div class="cd-blocks">
+        <div class="cd-block"><div class="cd-num" id="cd-j">—</div><div class="cd-lbl">Jours</div></div>
+        <div class="cd-block"><div class="cd-num" id="cd-h">—</div><div class="cd-lbl">Heures</div></div>
+        <div class="cd-block"><div class="cd-num" id="cd-m">—</div><div class="cd-lbl">Min</div></div>
+      </div>
+      <div class="cd-name" id="cd-name" style="margin-bottom:10px;">Configure ci-dessous</div>
+      <input class="cd-edit" type="date" id="cd-date-inp" oninput="saveCountdown()">
+      <input class="cd-edit" type="text" id="cd-label-inp" placeholder="Nom (ex: Toussaint, Noël...)" oninput="saveCountdown()" style="margin-top:8px;">
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><span>🔔</span><h2>Rappels automatiques</h2></div>
+    <div class="notif-card">
+      <div class="notif-row">
+        <span style="font-size:22px;">🚿</span>
+        <div class="notif-info">
+          <div class="notif-title">Rappel douche à 18h45</div>
+          <div class="notif-desc">"Douche avant 19h !" les jours de cours</div>
+        </div>
+        <button class="toggle" id="tog-douche" onclick="toggleNotif('douche',this)"></button>
+      </div>
+    </div>
+    <div class="notif-card">
+      <div class="notif-row">
+        <span style="font-size:22px;">📝</span>
+        <div class="notif-info">
+          <div class="notif-title">Rappel devoirs</div>
+          <div class="notif-desc">Alerte à l'heure d'arrivée selon le jour</div>
+        </div>
+        <button class="toggle" id="tog-devoirs" onclick="toggleNotif('devoirs',this)"></button>
+      </div>
+    </div>
+    <div style="background:#FFF3CD;border-left:3px solid #ECC94B;border-radius:8px;padding:11px 14px;font-size:12px;color:#744210;margin-top:8px;">
+      ⚠️ Les rappels fonctionnent seulement quand l'appli est ouverte. Ajoute-la à ton écran d'accueil via Samsung Internet pour qu'elle reste active.
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><span>🔗</span><h2>Accès rapides</h2></div>
+    <div class="plus-list">
+      <div class="plus-item" onclick="go('planning')"><span class="plus-ico">📅</span><span class="plus-lbl">Planning de la semaine</span><span class="plus-arr">›</span></div>
+      <div class="plus-item" onclick="go('routine')"><span class="plus-ico">⏱️</span><span class="plus-lbl">Routine en rentrant</span><span class="plus-arr">›</span></div>
+      <div class="plus-item" onclick="go('papillon')"><span class="plus-ico">🏫</span><span class="plus-lbl">Ecole Directe</span><span class="plus-arr">›</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ PLANNING ══════ -->
+<div id="pg-planning" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+    <button onclick="go('plus')" style="background:none;border:none;font-size:22px;cursor:pointer;padding:0;">‹</button>
+    <h1 style="font-size:22px;font-weight:700;">📅 Planning</h1>
+  </div>
+  <div class="alert">🚿 Douche avant 19h00 tous les soirs !</div>
+  <div style="overflow-x:auto;">
+  <table class="plan-table">
+    <thead><tr><th>Jour</th><th>Arrivée</th><th>Programme</th></tr></thead>
+    <tbody>
+      <tr><td><div class="dn">🟦 Lundi</div></td><td><span class="mono">🏠 17h25</span></td><td><span class="pill pgr">🚌 17h–17h25</span><span class="pill po">🍎 17h25–17h45</span><span class="pill pb">📝 17h45–18h35</span><span class="pill pg">📈 18h35–18h45</span><span class="pill pp">🎒 18h45–18h50</span><span class="pill pr">🚿 18h50–19h</span></td></tr>
+      <tr><td><div class="dn">🟦 Mardi</div></td><td><span class="mono">🏠 17h25</span></td><td><span class="pill pgr">🚌 17h–17h25</span><span class="pill po">🍎 17h25–17h45</span><span class="pill pb">📝 17h45–18h35</span><span class="pill pg">📈 18h35–18h45</span><span class="pill pp">🎒 18h45–18h50</span><span class="pill pr">🚿 18h50–19h</span></td></tr>
+      <tr><td><div class="dn">🟩 Mercredi</div><div class="mono">🇺🇸 US</div></td><td><span class="mono">🏠 12h55</span></td><td><span class="pill pgr">🚌 12h30–12h55</span><span class="pill po">🍽️ 12h55–13h30</span><span class="pill pb">📝 13h30–15h</span><span class="pill pgr">☕ 15h–15h30</span><span class="pill pus">📈 15h30–17h30 🇺🇸</span><span class="pill pg">📊 17h30–17h40</span><span class="pill pgr">🎮 17h40–18h30</span><span class="pill pp">🎒 18h30–18h45</span><span class="pill pr">🚿 18h45–19h</span></td></tr>
+      <tr><td><div class="dn">🟦 Jeudi A</div></td><td><span class="mono">🏠 17h25</span></td><td><span class="pill pgr">🚌 17h–17h25</span><span class="pill po">🍎 17h25–17h45</span><span class="pill pb">📝 17h45–18h35</span><span class="pill pg">📈 18h35–18h45</span><span class="pill pp">🎒 18h45–18h50</span><span class="pill pr">🚿 18h50–19h</span></td></tr>
+      <tr><td><div class="dn">🟦 Jeudi B</div></td><td><span class="mono">🏠 18h25</span></td><td><span class="pill pgr">🚌 18h–18h25</span><span class="pill po">🍎 18h25–18h35</span><span class="pill pp">🎒 18h35–18h45</span><span class="pill pr">🚿 18h45–19h !</span><span class="pill pgr">📝 devoirs → ven.</span></td></tr>
+      <tr><td><div class="dn">🟨 Vendredi</div></td><td><span class="mono">🏠 16h25</span></td><td><span class="pill pgr">🚌 16h–16h25</span><span class="pill po">🍎 16h25–16h45</span><span class="pill pb">📝 16h45–17h45</span><span class="pill pg">📈 17h45–18h</span><span class="pill pgr">🎮 18h–18h30</span><span class="pill pp">🎒 18h30–18h45</span><span class="pill pr">🚿 18h45–19h</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<script>
+// ══ DONNÉES PLANNING PAR JOUR ══
+// Chaque jour = liste de tâches avec {label, dur (secondes), color, btnColor}
+const DAY_TASKS = {
+  // Lundi (1), Mardi (2), Jeudi A (4)
+  standard: [
+    {label:'🍎 Goûter + pause',      dur:20*60, color:'#ED8936', btn:'#ED8936'},
+    {label:'📝 Devoirs',             dur:50*60, color:'#4299E1', btn:'#4299E1'},
+    {label:'📈 Trading (10 min)',    dur:10*60, color:'#38A169', btn:'#38A169'},
+    {label:'🎒 Préparer le sac',     dur: 5*60, color:'#805AD5', btn:'#805AD5'},
+    {label:'📋 Vérifier les devoirs',dur: 5*60, color:'#2B6CB0', btn:'#2B6CB0'},
+    {label:'👕 Préparer les habits', dur: 5*60, color:'#553C9A', btn:'#553C9A'},
+    {label:'🚿 Douche AVANT 19h !',  dur:10*60, color:'#E53E3E', btn:'#E53E3E'},
+  ],
+  3: [ // Mercredi
+    {label:'🍽️ Déjeuner + détente',  dur:35*60, color:'#ED8936', btn:'#ED8936'},
+    {label:'📝 Devoirs',             dur:90*60, color:'#4299E1', btn:'#4299E1'},
+    {label:'☕ Pause avant session', dur:30*60, color:'#A0AEC0', btn:'#718096'},
+    {label:'📈 Session US 🇺🇸',      dur:120*60,color:'#2F855A', btn:'#2F855A'},
+    {label:'📊 Bilan de session',    dur:10*60, color:'#2B6CB0', btn:'#2B6CB0'},
+    {label:'🎮 Temps libre',         dur:50*60, color:'#A0AEC0', btn:'#718096'},
+    {label:'🎒 Préparer le sac',     dur: 5*60, color:'#805AD5', btn:'#805AD5'},
+    {label:'📋 Vérifier les devoirs',dur: 5*60, color:'#2B6CB0', btn:'#2B6CB0'},
+    {label:'👕 Préparer les habits', dur: 5*60, color:'#553C9A', btn:'#553C9A'},
+    {label:'🚿 Douche AVANT 19h !',  dur:10*60, color:'#E53E3E', btn:'#E53E3E'},
+  ],
+  5: [ // Vendredi
+    {label:'🍎 Goûter + pause',      dur:20*60, color:'#ED8936', btn:'#ED8936'},
+    {label:'📝 Devoirs + révisions', dur:60*60, color:'#4299E1', btn:'#4299E1'},
+    {label:'📈 Trading',             dur:15*60, color:'#38A169', btn:'#38A169'},
+    {label:'🎮 Temps libre',         dur:30*60, color:'#A0AEC0', btn:'#718096'},
+    {label:'🎒 Préparer le sac',     dur: 5*60, color:'#805AD5', btn:'#805AD5'},
+    {label:'📋 Vérifier les devoirs',dur: 5*60, color:'#2B6CB0', btn:'#2B6CB0'},
+    {label:'👕 Préparer les habits', dur: 5*60, color:'#553C9A', btn:'#553C9A'},
+    {label:'🚿 Douche AVANT 19h !',  dur:10*60, color:'#E53E3E', btn:'#E53E3E'},
+  ],
+  // Jeudi B = spécial (peu de temps)
+  jeudi_b: [
+    {label:'🍎 Goûter rapide',       dur:10*60, color:'#ED8936', btn:'#ED8936'},
+    {label:'🎒 Préparer le sac EN PRIORITÉ', dur:10*60, color:'#805AD5', btn:'#805AD5'},
+    {label:'📋 Vérifier les devoirs',dur: 5*60, color:'#2B6CB0', btn:'#2B6CB0'},
+    {label:'👕 Préparer les habits', dur: 5*60, color:'#553C9A', btn:'#553C9A'},
+    {label:'🚿 Douche AVANT 19h !',  dur:10*60, color:'#E53E3E', btn:'#E53E3E'},
+  ]
+};
+
+// Durée devoirs par jour (pour le prompt Claude)
+const DEVOIRS_TIME = {1:'50 minutes',2:'50 minutes',3:'1h30',4:'50 minutes',5:'1 heure'};
+const DAY_NAMES = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+const MONTHS = ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+
+// ══ NAVIGATION ══
+function go(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pg-'+name).classList.add('on');
+  const idx={home:0,devoirs:1,notes:2,trading:3,plus:4}[name];
+  if(idx!==undefined) document.querySelectorAll('.ni')[idx].classList.add('on');
+  window.scrollTo(0,0);
+}
+
+// ══ HORLOGE ══
+function updateClock(){
+  const now=new Date();
+  const h=String(now.getHours()).padStart(2,'0');
+  const m=String(now.getMinutes()).padStart(2,'0');
+  const el=document.getElementById('today-time');
+  if(el) el.textContent=`🕐 ${h}h${m}`;
+}
+setInterval(updateClock,15000);
+
+// ══ ACCUEIL : blocs accordéon ══
+const BLOC_SCHED = {
+  1:[
+    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'17h00 → 17h25', tasks:[]},
+    {ico:'🍎',color:'c-gouter', title:'Goûter + pause',      time:'17h25 → 17h45', tasks:['🍎 Manger','📱 Décompresser 20 min']},
+    {ico:'📝',color:'c-devoirs',title:'Devoirs',             time:'17h45 → 18h35', tasks:['📝 Faire tous mes devoirs']},
+    {ico:'📈',color:'c-trading',title:'Coup d\'œil trading', time:'18h35 → 18h45', tasks:['📈 Regarder le site (10 min)']},
+    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'18h45 → 18h50', tasks:['🎒 Préparer le sac','📋 Vérifier agenda']},
+    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h !',  time:'18h50 → 19h00', tasks:['🚿 Douche ← AVANT 19H !']},
+  ],
+  2:[
+    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'17h00 → 17h25', tasks:[]},
+    {ico:'🍎',color:'c-gouter', title:'Goûter + pause',      time:'17h25 → 17h45', tasks:['🍎 Manger','📱 Décompresser 20 min']},
+    {ico:'📝',color:'c-devoirs',title:'Devoirs',             time:'17h45 → 18h35', tasks:['📝 Faire tous mes devoirs']},
+    {ico:'📈',color:'c-trading',title:'Coup d\'œil trading', time:'18h35 → 18h45', tasks:['📈 Regarder le site (10 min)']},
+    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'18h45 → 18h50', tasks:['🎒 Préparer le sac','📋 Vérifier agenda']},
+    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h !',  time:'18h50 → 19h00', tasks:['🚿 Douche ← AVANT 19H !']},
+  ],
+  3:[
+    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'12h30 → 12h55', tasks:[]},
+    {ico:'🍽️',color:'c-gouter', title:'Déjeuner',            time:'12h55 → 13h30', tasks:['🍽️ Déjeuner','😌 Se détendre']},
+    {ico:'📝',color:'c-devoirs',title:'Devoirs',             time:'13h30 → 15h00', tasks:['📝 Faire tous mes devoirs']},
+    {ico:'☕',color:'c-libre',  title:'Pause avant session', time:'15h00 → 15h30', tasks:['☕ Se préparer']},
+    {ico:'📈',color:'c-us',     title:'🇺🇸 Session US',      time:'15h30 → 17h30', tasks:['📈 Ouvrir le site','🔍 Analyser les opportunités','📊 Prendre des notes']},
+    {ico:'📊',color:'c-bilan',  title:'Bilan de session',    time:'17h30 → 17h40', tasks:['📊 Écrire le bilan (10 min)']},
+    {ico:'🎮',color:'c-libre',  title:'Temps libre',         time:'17h40 → 18h30', tasks:['🎮 Temps libre !']},
+    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'18h30 → 18h45', tasks:['🎒 Préparer le sac','📋 Vérifier agenda']},
+    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h !',  time:'18h45 → 19h00', tasks:['🚿 Douche ← AVANT 19H !']},
+  ],
+  4:[
+    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'17h00 → 17h25', tasks:[]},
+    {ico:'🍎',color:'c-gouter', title:'Goûter + pause',      time:'17h25 → 17h45', tasks:['🍎 Manger','📱 Décompresser 20 min']},
+    {ico:'📝',color:'c-devoirs',title:'Devoirs',             time:'17h45 → 18h35', tasks:['📝 Faire tous mes devoirs']},
+    {ico:'📈',color:'c-trading',title:'Coup d\'œil trading', time:'18h35 → 18h45', tasks:['📈 Regarder le site (10 min)']},
+    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'18h45 → 18h50', tasks:['🎒 Préparer le sac','📋 Vérifier agenda']},
+    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h !',  time:'18h50 → 19h00', tasks:['🚿 Douche ← AVANT 19H !']},
+  ],
+  5:[
+    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'16h00 → 16h25', tasks:[]},
+    {ico:'🍎',color:'c-gouter', title:'Goûter + pause',      time:'16h25 → 16h45', tasks:['🍎 Manger','📱 Décompresser']},
+    {ico:'📝',color:'c-devoirs',title:'Devoirs + révisions', time:'16h45 → 17h45', tasks:['📝 Devoirs + révisions week-end']},
+    {ico:'📈',color:'c-trading',title:'Trading',             time:'17h45 → 18h00', tasks:['📈 Regarder le site']},
+    {ico:'🎮',color:'c-libre',  title:'Temps libre',         time:'18h00 → 18h30', tasks:['🎮 Temps libre !']},
+    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'18h30 → 18h45', tasks:['🎒 Préparer le sac','📋 Vérifier agenda']},
+    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h !',  time:'18h45 → 19h00', tasks:['🚿 Douche ← AVANT 19H !']},
+  ]
+};
+
+// Couleurs par jour
+const DAY_COLORS={
+  1:{grad:'linear-gradient(135deg,#1A365D,#2B6CB0)',label:'🟦 Lundi',accent:'#2B6CB0'},
+  2:{grad:'linear-gradient(135deg,#44337A,#6B46C1)',label:'🟣 Mardi',accent:'#6B46C1'},
+  3:{grad:'linear-gradient(135deg,#1C4532,#2F855A)',label:'🟩 Mercredi',accent:'#2F855A'},
+  4:{grad:'linear-gradient(135deg,#7B341E,#C05621)',label:'🟠 Jeudi',accent:'#C05621'},
+  5:{grad:'linear-gradient(135deg,#744210,#D69E2E)',label:'🟡 Vendredi',accent:'#D69E2E'},
+};
+
+function buildHome(){
+  const now=new Date();
+  const dow=now.getDay();
+  const h=String(now.getHours()).padStart(2,'0');
+  const m=String(now.getMinutes()).padStart(2,'0');
+
+  document.getElementById('today-date').textContent=`${DAY_NAMES[dow]} ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+  document.getElementById('today-day').textContent= dow===0||dow===6 ? 'Week-end 🎉' : `${DAY_NAMES[dow]} — programme du jour`;
+  document.getElementById('today-time').textContent=`🕐 ${h}h${m}`;
+
+  // Couleur du header selon le jour
+  const hdr=document.getElementById('today-hdr');
+  const dc=DAY_COLORS[dow];
+  if(dc) hdr.style.background=dc.grad;
+  else hdr.style.background='linear-gradient(135deg,#744210,#C05621)';
+
+  const bdg=document.getElementById('today-bdg');
+  const container=document.getElementById('day-blocks');
+  container.innerHTML='';
+
+  if(dow===0||dow===6){
+    bdg.textContent='Pas de cours !'; bdg.className='today-bdg';
+    container.innerHTML=`<div class="weekend-card"><h2>🎉 Week-end !</h2><p>Profite bien.<br>Les blocs reviennent lundi.</p></div>`;
+    return;
+  }
+  bdg.textContent='🚿 Douche avant 19h !'; bdg.className='today-bdg red';
+
+  const accent=dc?dc.accent:'#2B6CB0';
+  const blocs=BLOC_SCHED[dow]||[];
+  blocs.forEach((b,i)=>{
+    if(!b.tasks.length) return;
+    const id='blc'+i;
+    const curH=now.getHours();
+    const startH=parseInt(b.time.split('h')[0]);
+    const isNow=curH>=startH&&curH<startH+2;
+
+    // Couleur de la barre selon le jour pour les blocs normaux (garde rouge pour douche)
+    const barColor=b.color==='c-douche'?'#E53E3E':accent;
+
+    const items=b.tasks.map((t,j)=>{
+      const tid=`${id}t${j}`;
+      return `<div class="chk" id="${tid}"><div class="chk-top"><div class="chk-box" onclick="chk('${tid}')"></div><span class="chk-label">${t}</span></div></div>`;
+    }).join('');
+
+    const div=document.createElement('div');
+    div.className='bloc';
+    // Légère teinte de fond selon le jour si c'est le bloc actif
+    if(isNow) div.style.boxShadow=`0 0 0 2px ${accent}40, var(--sh)`;
+    div.innerHTML=`
+      <div class="bloc-hdr" onclick="toggleB('${id}')">
+        <div class="bloc-bar" style="background:${barColor};"></div>
+        <span class="bloc-ico">${b.ico}</span>
+        <div class="bloc-inf">
+          <div class="bloc-tit">${b.title}</div>
+          <div class="bloc-time">${b.time}</div>
+        </div>
+        <span class="bloc-arr ${isNow?'open':''}" id="arr${id}" style="color:${accent};">›</span>
+      </div>
+      <div class="bloc-body ${isNow?'open':''}" id="body${id}">
+        <div class="checklist">${items}</div>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function toggleB(id){
+  document.getElementById('body'+id).classList.toggle('open');
+  document.getElementById('arr'+id).classList.toggle('open');
+}
+
+// ══ ROUTINE : génère les timers selon le jour ══
+function buildRoutine(){
+  const now=new Date();
+  const dow=now.getDay();
+  const dayName=DAY_NAMES[dow]||'';
+  const list=document.getElementById('routine-list');
+  list.innerHTML='';
+  document.getElementById('all-done').style.display='none';
+  routineTimers={};
+
+  let tasks;
+  if(dow===0||dow===6){
+    document.getElementById('routine-title').textContent='Routine en rentrant';
+    document.getElementById('routine-sub').textContent='Week-end — pas de routine scolaire 🎉';
+    list.innerHTML=`<div style="text-align:center;color:var(--muted);padding:30px;font-size:14px;">C'est le week-end !<br>Profite bien 🎉</div>`;
+    return;
+  }
+
+  if(dow===4 && confirm('Jeudi semaine B (retour à 18h) ? → OK = oui, Annuler = semaine A')){
+    tasks=DAY_TASKS.jeudi_b;
+    document.getElementById('routine-sub').textContent='Jeudi Semaine B — arrivée 18h25';
+  } else {
+    tasks=DAY_TASKS[dow]||DAY_TASKS.standard;
+    document.getElementById('routine-sub').textContent=`${dayName} — timers du soir`;
+  }
+  document.getElementById('routine-title').textContent='Routine en rentrant';
+
+  tasks.forEach((task,i)=>{
+    const id='rt'+i;
+    const mins=Math.round(task.dur/60);
+    const fmtDur=mins>=60?`${Math.floor(mins/60)}h${mins%60?String(mins%60).padStart(2,'0'):''}`:mins+' min';
+    const initDisp=`${String(Math.floor(task.dur/60)).padStart(2,'0')}:${String(task.dur%60).padStart(2,'0')}`;
+    const isDouche=task.label.includes('Douche');
+
+    const div=document.createElement('div');
+    div.className='chk';
+    div.id=id;
+    if(isDouche) div.style.borderColor='#FC8181';
+    div.innerHTML=`
+      <div class="chk-top">
+        <div class="chk-box" id="cb-${id}" onclick="manualDone('${id}',${task.dur})"></div>
+        <span class="chk-label" ${isDouche?'style="color:var(--red);font-weight:700;"':''}>${task.label}</span>
+        <span class="chk-dur" ${isDouche?'style="background:var(--tag-red);color:var(--red);"':''}>${fmtDur}</span>
+      </div>
+      <div class="chk-bot">
+        <button class="btn-go" id="btn-${id}" style="background:${task.btn};" onclick="startTimer('${id}',${task.dur})">▶ Commencer</button>
+        <span class="tdisp" id="td-${id}" style="color:${task.btn};">${initDisp}</span>
+      </div>
+      <div class="pbar"><div class="pfill" id="pf-${id}" style="width:100%;background:${task.btn};"></div></div>`;
+    list.appendChild(div);
+  });
+
+  routineTotal=tasks.length;
+}
+
+// ══ CHECKBOX ══
+function chk(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  const box=el.querySelector('.chk-box');
+  const done=box.classList.toggle('checked');
+  box.textContent=done?'✓':'';
+  el.classList.toggle('done',done);
+}
+
+// ══ TIMERS ══
+let routineTimers={};
+let routineTotal=0;
+const fmt=s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+
+function startTimer(id,total){
+  if(document.getElementById(id).classList.contains('done'))return;
+  if(routineTimers[id]&&routineTimers[id].running){
+    clearInterval(routineTimers[id].iv);
+    routineTimers[id].running=false;
+    document.getElementById('btn-'+id).textContent='▶ Reprendre';
+    return;
+  }
+  if(!routineTimers[id]) routineTimers[id]={rem:total};
+  routineTimers[id].running=true;
+  document.getElementById('btn-'+id).textContent='⏸ Pause';
+
+  routineTimers[id].iv=setInterval(()=>{
+    routineTimers[id].rem--;
+    const r=routineTimers[id].rem;
+    const td=document.getElementById('td-'+id);
+    const pf=document.getElementById('pf-'+id);
+    td.textContent=fmt(r);
+    pf.style.width=(r/total*100)+'%';
+    if(r<=60){td.classList.add('urgent');pf.classList.add('urgent');}
+    if(r<=0){
+      clearInterval(routineTimers[id].iv);
+      routineTimers[id].running=false;
+      bell();
+      setTimeout(()=>finishTask(id),600);
+    }
+  },1000);
+}
+
+function finishTask(id){
+  const el=document.getElementById(id);
+  const box=document.getElementById('cb-'+id);
+  box.classList.add('checked');box.textContent='✓';
+  el.classList.add('done');el.style.background='#F0FFF4';el.style.borderColor='#9AE6B4';
+  const btn=document.getElementById('btn-'+id);
+  btn.disabled=true;btn.textContent='✅ Fait !';
+  document.getElementById('td-'+id).textContent='00:00';
+  checkAllDone();
+}
+
+function manualDone(id,total){
+  if(document.getElementById(id).classList.contains('done'))return;
+  if(routineTimers[id]&&routineTimers[id].running){clearInterval(routineTimers[id].iv);routineTimers[id].running=false;}
+  bell();finishTask(id);
+}
+
+function checkAllDone(){
+  const allItems=document.querySelectorAll('#routine-list .chk');
+  const done=[...allItems].every(el=>el.classList.contains('done'));
+  if(done) document.getElementById('all-done').style.display='block';
+}
+
+function bell(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    [0,250,500].forEach(d=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=880;o.type='sine';
+      const t=ctx.currentTime+d/1000;
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.5,t+.05);g.gain.linearRampToValueAtTime(0,t+.3);
+      o.start(t);o.stop(t+.35);
+    });
+  }catch(e){}
+}
+
+// ══ ECOLE DIRECTE APP ══
+function openEcoleDirecte(){
+  // Format intent Android sans fallback web pour éviter la popup Chrome
+  window.location.href='intent:#Intent;package=com.ecoledirecte.edmobile;component=com.ecoledirecte.edmobile/.MainActivity;end';
+  // Si l'appli ne s'ouvre pas au bout de 1.5s → ouvre le site
+  setTimeout(()=>{
+    if(document.visibilityState!=='hidden'){
+      window.open('https://www.ecoledirecte.com','_blank');
+    }
+  },1500);
+}
+
+// ══ DEVOIRS DYNAMIQUES ══
+let devoirs=JSON.parse(localStorage.getItem('devoirs')||'[]');
+let selMatiere='';
+let selMatiereClass='';
+let selDateVal='';
+let editId=null;
+
+const MAT_COLORS={
+  'Maths':'pb','Français':'pp','Histoire-Géo':'po','SVT':'pg',
+  'Anglais':'pb','Physique':'pr','Espagnol':'po','Techno':'pgr'
+};
+const MAT_STYLES={
+  'Maths':'background:var(--tag-blue);color:var(--blue)',
+  'Français':'background:var(--tag-purple);color:var(--purple)',
+  'Histoire-Géo':'background:var(--tag-orange);color:var(--orange)',
+  'SVT':'background:var(--tag-green);color:var(--green)',
+  'Anglais':'background:var(--tag-blue);color:var(--blue)',
+  'Physique':'background:var(--tag-red);color:var(--red)',
+  'Espagnol':'background:var(--tag-orange);color:var(--orange)',
+  'Techno':'background:#F0EFE9;color:var(--muted)'
+};
+
+function saveDevoirs(){localStorage.setItem('devoirs',JSON.stringify(devoirs));}
+
+function toggleForm(){
+  const f=document.getElementById('add-form');
+  const b=document.getElementById('btn-add-devoir');
+  const showing=f.style.display==='block';
+  f.style.display=showing?'none':'block';
+  b.textContent=showing?'➕ Ajouter un devoir':'✖ Fermer';
+  if(!showing){resetForm();}
+}
+
+function resetForm(){
+  selMatiere='';selMatiereClass='';selDateVal='';editId=null;
+  document.querySelectorAll('.mat-btn').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('.date-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('new-travail').value='';
+}
+
+function selMat(btn,name,cls){
+  document.querySelectorAll('.mat-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  selMatiere=name;selMatiereClass=cls;
+}
+
+function selDate(btn,val){
+  document.querySelectorAll('.date-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  selDateVal=val;
+}
+
+function addDevoir(){
+  const travail=document.getElementById('new-travail').value.trim();
+  if(!selMatiere){alert('Choisis une matière !');return;}
+  if(!travail){alert('Écris le travail à faire !');return;}
+  if(!selDateVal){alert('Choisis une date !');return;}
+
+  const d={id:Date.now(),matiere:selMatiere,matiereClass:selMatiereClass,travail,date:selDateVal,statut:'non'};
+  devoirs.unshift(d);
+  saveDevoirs();renderDevoirs();toggleForm();
+}
+
+function setStatut(id,statut){
+  const d=devoirs.find(x=>x.id===id);
+  if(d){d.statut=statut;saveDevoirs();renderDevoirs();}
+}
+
+function delDevoir(id){
+  devoirs=devoirs.filter(x=>x.id!==id);
+  saveDevoirs();renderDevoirs();
+}
+
+function renderDevoirs(){
+  const list=document.getElementById('devoirs-list');
+  const empty=document.getElementById('devoirs-empty');
+  const claudeBox=document.getElementById('claude-devoirs-box');
+  const pending=devoirs.filter(d=>d.statut!=='fait');
+  const filtered=currentFilter==='tous'?devoirs:devoirs.filter(d=>d.statut===currentFilter);
+
+  if(!devoirs.length){
+    list.innerHTML='';
+    empty.style.display='block';
+    empty.textContent='Aucun devoir pour l\'instant 🎉';
+    if(claudeBox) claudeBox.style.display='none';
+    return;
+  }
+  if(!filtered.length){
+    list.innerHTML='';
+    empty.style.display='block';
+    empty.textContent='Aucun devoir dans cette catégorie.';
+    if(claudeBox) claudeBox.style.display=pending.length?'block':'none';
+    return;
+  }
+  empty.style.display='none';
+  if(claudeBox) claudeBox.style.display=pending.length?'block':'none';
+
+  list.innerHTML=filtered.map(d=>`
+    <div class="dv-card ${d.statut==='fait'?'dv-fait':''}" id="dvc-${d.id}">
+      <div class="dv-top">
+        <span class="dv-mat" style="${MAT_STYLES[d.matiere]||'background:#F0EFE9;color:var(--muted)'}">${d.matiere}</span>
+        <span class="dv-date">${d.date}</span>
+      </div>
+      <div class="dv-travail" style="${d.statut==='fait'?'text-decoration:line-through;color:var(--muted)':''}">${d.travail}</div>
+      <div class="dv-statut">
+        <button class="stat-btn stat-fait ${d.statut==='fait'?'on':''}" onclick="setStatut(${d.id},'fait')">✅ Fait</button>
+        <button class="stat-btn stat-enc ${d.statut==='enc'?'on':''}" onclick="setStatut(${d.id},'enc')">⏳ En cours</button>
+        <button class="stat-btn stat-non ${d.statut==='non'?'on':''}" onclick="setStatut(${d.id},'non')">❌ Pas fait</button>
+        <button class="dv-del" onclick="delDevoir(${d.id})">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+// ══ OUVRIR CLAUDE AVEC LES DEVOIRS ══
+function openClaudeWithDevoirs(){
+  const now=new Date();
+  const dow=now.getDay();
+  const dayName=DAY_NAMES[dow]||'aujourd\'hui';
+  const info=DAY_SCHEDULE_DETAIL[dow]; // peut être undefined le week-end
+
+  const pending=devoirs.filter(d=>d.statut!=='fait');
+  if(!pending.length){alert('Tous tes devoirs sont déjà faits ! 🎉');return;}
+
+  const listeTxt=pending.map(d=>{
+    const statut=d.statut==='enc'?'(en cours)':'(pas encore fait)';
+    return `- ${d.matiere} : ${d.travail} → pour ${d.date} ${statut}`;
+  }).join('\n');
+
+  // Week-end : temps libre, pas de contrainte horaire stricte
+  const devoirsTime=info?info.devoirsTime:'autant que nécessaire';
+  const arrivee=info?info.arrivee:null;
+  const contexte=info
+    ? `Je rentre à la maison vers ${arrivee} et je dois avoir pris ma douche avant 19h00 (règle absolue).\nJ'ai exactement ${devoirsTime} pour faire mes devoirs.${info.note?'\nInfo : '+info.note:''}`
+    : `C'est le week-end, j'ai plus de temps mais je veux quand même avancer efficacement.`;
+
+  const prompt=`Bonjour Claude ! Je suis en classe de 4e en France.
+
+Aujourd'hui c'est ${dayName}. ${contexte}
+
+Voici mes devoirs à faire :
+${listeTxt}
+
+Aide-moi à :
+1. Les organiser par ordre de priorité en fonction des dates
+2. Estimer le temps pour chacun${info?` pour tenir dans mes ${devoirsTime}`:''}
+3. Me dire si c'est faisable ou si je dois en reporter certains
+4. M'expliquer rapidement si je bloque sur quelque chose
+
+Sois court et direct !`;
+
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(prompt)
+      .then(()=>{showToast();setTimeout(()=>window.open('https://claude.ai/new','_blank'),400);})
+      .catch(()=>fallbackCopy(prompt));
+  } else {
+    fallbackCopy(prompt);
+  }
+}
+
+// ══ BOUTON CLAUDE ══
+// Programme complet par jour avec toutes les durées
+const DAY_SCHEDULE_DETAIL = {
+  1: {
+    arrivee: '17h25',
+    programme: `- 🍎 Goûter + pause : 20 min (17h25–17h45)
+- 📝 Devoirs : 50 min (17h45–18h35)
+- 📈 Trading : 10 min (18h35–18h45)
+- 🎒 Préparer le sac : 5 min
+- 📋 Vérifier les devoirs : 5 min
+- 👕 Préparer les habits : 5 min
+- 🚿 Douche : 10 min (avant 19h00 impératif)`,
+    devoirsTime: '50 minutes',
+    note: ''
+  },
+  2: {
+    arrivee: '17h25',
+    programme: `- 🍎 Goûter + pause : 20 min (17h25–17h45)
+- 📝 Devoirs : 50 min (17h45–18h35)
+- 📈 Trading : 10 min (18h35–18h45)
+- 🎒 Préparer le sac : 5 min
+- 📋 Vérifier les devoirs : 5 min
+- 👕 Préparer les habits : 5 min
+- 🚿 Douche : 10 min (avant 19h00 impératif)`,
+    devoirsTime: '50 minutes',
+    note: ''
+  },
+  3: {
+    arrivee: '12h55',
+    programme: `- 🍽️ Déjeuner + détente : 35 min (12h55–13h30)
+- 📝 Devoirs : 1h30 (13h30–15h00)
+- ☕ Pause avant session : 30 min (15h00–15h30)
+- 📈 Session US (trading) : 2h (15h30–17h30)
+- 📊 Bilan de session : 10 min (17h30–17h40)
+- 🎮 Temps libre : 50 min (17h40–18h30)
+- 🎒 Préparer le sac : 5 min
+- 📋 Vérifier les devoirs : 5 min
+- 👕 Préparer les habits : 5 min
+- 🚿 Douche : 10 min (avant 19h00 impératif)`,
+    devoirsTime: '1h30',
+    note: 'Le mercredi je dois aussi trader la session US américaine de 15h30 à 17h30.'
+  },
+  4: {
+    arrivee: '17h25',
+    programme: `- 🍎 Goûter + pause : 20 min (17h25–17h45)
+- 📝 Devoirs : 50 min (17h45–18h35)
+- 📈 Trading : 10 min (18h35–18h45)
+- 🎒 Préparer le sac : 5 min
+- 📋 Vérifier les devoirs : 5 min
+- 👕 Préparer les habits : 5 min
+- 🚿 Douche : 10 min (avant 19h00 impératif)`,
+    devoirsTime: '50 minutes',
+    note: ''
+  },
+  5: {
+    arrivee: '16h25',
+    programme: `- 🍎 Goûter + pause : 20 min (16h25–16h45)
+- 📝 Devoirs + révisions : 1h (16h45–17h45)
+- 📈 Trading : 15 min (17h45–18h00)
+- 🎮 Temps libre : 30 min (18h00–18h30)
+- 🎒 Préparer le sac : 5 min
+- 📋 Vérifier les devoirs : 5 min
+- 👕 Préparer les habits : 5 min
+- 🚿 Douche : 10 min (avant 19h00 impératif)`,
+    devoirsTime: '1 heure',
+    note: ''
+  }
+};
+
+function openClaudeWithDevoirs(){
+  const now=new Date();
+  const dow=now.getDay();
+  const dayName=DAY_NAMES[dow]||'aujourd\'hui';
+  const info=DAY_SCHEDULE_DETAIL[dow]||null; // null le week-end
+
+  const aFaire=devoirs.filter(d=>d.statut!=='fait');
+  const liste=aFaire.map(d=>`- ${d.matiere} : ${d.travail} (pour le ${d.date})${d.statut==='enc'?' ← déjà commencé':''}`).join('\n');
+
+  let prompt;
+  if(aFaire.length===0){
+    prompt=`Bonjour Claude ! Je suis en classe de 4e en France.\nAujourd'hui c'est ${dayName} et j'ai tout fini ! Tu peux me donner des conseils pour réviser ou avancer sur autre chose ?`;
+  } else if(!info){
+    // Week-end
+    prompt=`Bonjour Claude ! Je suis en classe de 4e en France.
+
+C'est le week-end (${dayName}), j'ai du temps libre mais je veux avancer efficacement sur mes devoirs.
+
+Voici mes devoirs à faire (${aFaire.length} devoir${aFaire.length>1?'s':''}) :
+${liste}
+
+Aide-moi à :
+1. Les organiser par ordre de priorité
+2. Estimer le temps pour chacun
+3. Me conseiller sur quoi faire en premier
+4. M'expliquer si je bloque sur quelque chose
+
+Sois court et direct !`;
+  } else {
+    prompt=`Bonjour Claude ! Je suis en classe de 4e en France.
+
+Aujourd'hui c'est ${dayName}. Voici mon planning exact pour ce soir :
+- Temps pour les devoirs : ${info.devoirsTime}
+- Après les devoirs : trading, sac, habits, douche avant 19h00 (règle absolue)
+
+Voici mes devoirs à faire (${aFaire.length} devoir${aFaire.length>1?'s':''}) :
+${liste}
+
+Aide-moi à :
+1. Les organiser par ordre de priorité en respectant mon temps disponible
+2. Estimer combien de temps chaque devoir va prendre
+3. Me dire si c'est faisable ce soir ou si je dois reporter quelque chose
+4. M'expliquer rapidement si je bloque sur quelque chose
+
+Sois court et direct, j'ai pas beaucoup de temps !`;
+  }
+
+  doCopy(prompt);
+}
+
+function doCopy(prompt){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(prompt).then(()=>{
+      showToast();
+      setTimeout(()=>window.open('https://claude.ai/new','_blank'),400);
+    }).catch(()=>fallbackCopy(prompt));
+  } else {
+    fallbackCopy(prompt);
+  }
+}
+
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();
+  document.execCommand('copy');document.body.removeChild(ta);
+  showToast();
+  setTimeout(()=>window.open('https://claude.ai/new','_blank'),400);
+}
+
+function showToast(){
+  const t=document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ══ FILTRE DEVOIRS ══
+let currentFilter='tous';
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.f-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderDevoirs();
+}
+
+// ══ NOTES / MOYENNES ══
+let notesData=JSON.parse(localStorage.getItem('notes-data')||'[]');
+// notesData = [{id, nom, style, notes:[{id,val,coef,label}]}]
+
+const MAT_NOTE_STYLES=[
+  {bg:'var(--tag-blue)',color:'var(--blue)'},
+  {bg:'var(--tag-purple)',color:'var(--purple)'},
+  {bg:'var(--tag-green)',color:'var(--green)'},
+  {bg:'var(--tag-orange)',color:'var(--orange)'},
+  {bg:'var(--tag-red)',color:'var(--red)'},
+  {bg:'#F0EFE9',color:'var(--muted)'},
+];
+
+function saveNotes(){localStorage.setItem('notes-data',JSON.stringify(notesData));}
+
+function moyenneMatiere(mat){
+  if(!mat.notes.length) return null;
+  const total=mat.notes.reduce((s,n)=>s+n.val*(n.coef||1),0);
+  const coefs=mat.notes.reduce((s,n)=>s+(n.coef||1),0);
+  return Math.round(total/coefs*100)/100;
+}
+
+function moyenneGenerale(){
+  const mats=notesData.filter(m=>m.notes.length>0);
+  if(!mats.length) return null;
+  const sum=mats.reduce((s,m)=>s+moyenneMatiere(m),0);
+  return Math.round(sum/mats.length*100)/100;
+}
+
+function moyClass(v){return v>=14?'good':v>=10?'ok':'bad';}
+
+function addMatiere(){
+  const nom=prompt('Nom de la matière ?');
+  if(!nom||!nom.trim()) return;
+  const style=MAT_NOTE_STYLES[notesData.length%MAT_NOTE_STYLES.length];
+  notesData.push({id:Date.now(),nom:nom.trim(),style,notes:[]});
+  saveNotes();renderNotes();
+}
+
+function addNote(matId){
+  const inp=document.getElementById('ni-'+matId);
+  const val=parseFloat(inp.value.replace(',','.'));
+  if(isNaN(val)||val<0||val>20){alert('Note entre 0 et 20 !');return;}
+  const mat=notesData.find(m=>m.id===matId);
+  mat.notes.push({id:Date.now(),val,coef:1,label:''});
+  inp.value='';
+  saveNotes();renderNotes();
+}
+
+function delNote(matId,noteId){
+  const mat=notesData.find(m=>m.id===matId);
+  mat.notes=mat.notes.filter(n=>n.id!==noteId);
+  saveNotes();renderNotes();
+}
+
+function delMatiere(matId){
+  if(!confirm('Supprimer cette matière et toutes ses notes ?')) return;
+  notesData=notesData.filter(m=>m.id!==matId);
+  saveNotes();renderNotes();
+}
+
+function renderNotes(){
+  const moy=moyenneGenerale();
+  const globVal=document.getElementById('moy-glob-val');
+  const globSub=document.getElementById('moy-glob-sub');
+  const globCard=document.querySelector('.moy-globale');
+  if(moy!==null){
+    globVal.textContent=moy.toFixed(2);
+    globVal.className='moy-glob-val '+moyClass(moy);
+    globSub.textContent=`Sur ${notesData.filter(m=>m.notes.length).length} matière(s)`;
+    globCard.style.background=moy>=14?'linear-gradient(135deg,#1C4532,#2F855A)':moy>=10?'linear-gradient(135deg,#7B341E,#C05621)':'linear-gradient(135deg,#63171B,#C53030)';
+  } else {
+    globVal.textContent='—';globSub.textContent='Ajoute des notes pour commencer';
+    globCard.style.background='linear-gradient(135deg,#1A365D,#2B6CB0)';
+  }
+
+  const container=document.getElementById('notes-matieres');
+  container.innerHTML=notesData.map(mat=>{
+    const moy=moyenneMatiere(mat);
+    const moyStr=moy!==null?moy.toFixed(2):'—';
+    const cls=moy!==null?moyClass(moy):'';
+    const pct=moy!==null?(moy/20*100)+'%':'0%';
+    const fillColor=moy===null?'#A0AEC0':moy>=14?'#38A169':moy>=10?'#ED8936':'#E53E3E';
+    const chips=mat.notes.map(n=>`<div class="note-chip"><span>${n.val}/20</span><button class="note-chip-del" onclick="delNote(${mat.id},${n.id})">✕</button></div>`).join('');
+    return `<div class="note-mat-card">
+      <div class="note-mat-hdr">
+        <span style="background:${mat.style.bg};color:${mat.style.color};padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;">${mat.nom}</span>
+        <span class="note-moy ${cls}" style="margin-left:auto;">${moyStr}</span>
+        <button onclick="delMatiere(${mat.id})" style="background:none;border:none;font-size:16px;opacity:.3;cursor:pointer;margin-left:8px;">🗑️</button>
+      </div>
+      ${mat.notes.length?`<div class="note-list">${chips}</div>`:'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Aucune note</div>'}
+      <div class="avg-bar"><div class="avg-fill" style="width:${pct};background:${fillColor};"></div></div>
+      <div class="note-add-row" style="margin-top:10px;">
+        <input class="note-inp" id="ni-${mat.id}" type="number" min="0" max="20" step="0.5" placeholder="Note /20" onkeydown="if(event.key==='Enter')addNote(${mat.id})">
+        <button class="note-add-btn" onclick="addNote(${mat.id})">+ Ajouter</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══ COMPTE À REBOURS ══
+function saveCountdown(){
+  const d=document.getElementById('cd-date-inp').value;
+  const l=document.getElementById('cd-label-inp').value;
+  localStorage.setItem('countdown',JSON.stringify({date:d,label:l}));
+  updateCountdown();
+}
+
+function updateCountdown(){
+  const data=JSON.parse(localStorage.getItem('countdown')||'{}');
+  const dateInp=document.getElementById('cd-date-inp');
+  const labelInp=document.getElementById('cd-label-inp');
+  if(data.date&&dateInp) dateInp.value=data.date;
+  if(data.label&&labelInp) labelInp.value=data.label;
+  if(!data.date){
+    ['cd-j','cd-h','cd-m'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
+    const n=document.getElementById('cd-name');if(n)n.textContent='Configure une date ci-dessous';
+    return;
+  }
+  const target=new Date(data.date+'T00:00:00');
+  const now=new Date();
+  const diff=target-now;
+  if(diff<=0){
+    ['cd-j','cd-h','cd-m'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='0';});
+    const n=document.getElementById('cd-name');if(n)n.textContent='🎉 '+(data.label||'Vacances')+'  — C\'est parti !';
+    return;
+  }
+  const jours=Math.floor(diff/86400000);
+  const heures=Math.floor((diff%86400000)/3600000);
+  const mins=Math.floor((diff%3600000)/60000);
+  const j=document.getElementById('cd-j');const h=document.getElementById('cd-h');const m=document.getElementById('cd-m');
+  if(j)j.textContent=jours;if(h)h.textContent=heures;if(m)m.textContent=mins;
+  const n=document.getElementById('cd-name');if(n)n.textContent='Avant '+(data.label||'les vacances');
+}
+setInterval(updateCountdown,60000);
+
+// ══ NOTIFICATIONS ══
+let notifTimers={};
+const NOTIF_CONFIG={
+  douche:{time:'18:45',msg:'🚿 Douche avant 19h !',days:[1,2,3,4,5]},
+  devoirs:{time:null,msgs:{1:'17:45',2:'17:45',3:'13:30',4:'17:45',5:'16:45'},msg:'📝 C\'est l\'heure des devoirs !',days:[1,2,3,4,5]}
+};
+
+function toggleNotif(key,btn){
+  btn.classList.toggle('on');
+  const on=btn.classList.contains('on');
+  localStorage.setItem('notif-'+key,on?'1':'0');
+  if(on){
+    requestNotifPermission();
+    scheduleNotif(key);
+  } else {
+    clearTimeout(notifTimers[key]);
+  }
+}
+
+function requestNotifPermission(){
+  if('Notification' in window && Notification.permission==='default'){
+    Notification.requestPermission();
+  }
+}
+
+function scheduleNotif(key){
+  const now=new Date();
+  const dow=now.getDay();
+  const cfg=NOTIF_CONFIG[key];
+  if(!cfg.days.includes(dow)) return;
+  let timeStr=cfg.time;
+  if(!timeStr&&cfg.msgs) timeStr=cfg.msgs[dow];
+  if(!timeStr) return;
+  const [h,m]=timeStr.split(':').map(Number);
+  const target=new Date();target.setHours(h,m,0,0);
+  const diff=target-now;
+  if(diff<=0) return;
+  notifTimers[key]=setTimeout(()=>{
+    if(Notification.permission==='granted'){
+      new Notification('📚 Collège + Trading',{body:cfg.msg,icon:''});
+    }
+  },diff);
+}
+
+function initNotifs(){
+  ['douche','devoirs'].forEach(key=>{
+    const saved=localStorage.getItem('notif-'+key);
+    const btn=document.getElementById('tog-'+key);
+    if(saved==='1'&&btn){btn.classList.add('on');scheduleNotif(key);}
+  });
+}
+
+// ══ INIT ══
+buildHome();
+buildRoutine();
+renderDevoirs();
+renderNotes();
+updateCountdown();
+initNotifs();
+</script>
+</body>
+</html>
