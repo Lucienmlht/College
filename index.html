@@ -511,15 +511,15 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);font-s
     <button onclick="go('plus')" style="background:none;border:none;font-size:22px;cursor:pointer;padding:0;">‹</button>
     <h1 style="font-size:22px;font-weight:700;">📅 Planning</h1>
   </div>
-  <div class="alert">🚿 Douche avant 19h00 tous les soirs !</div>
+  <div class="alert">🚿 Lun/Mar : douche avant 19h30 · Autres jours : avant 19h !</div>
   <div style="overflow-x:auto;">
   <table class="plan-table">
     <thead><tr><th>Jour</th><th>Arrivée</th><th>Programme</th></tr></thead>
     <tbody>
-      <tr><td><div class="dn">🟦 Lundi</div></td><td><span class="mono">🏠 17h25</span></td><td><span class="pill pgr">🚌 17h–17h25</span><span class="pill po">🍎 17h25–17h45</span><span class="pill pb">📝 17h45–18h35</span><span class="pill pg">📈 18h35–18h45</span><span class="pill pp">🎒 18h45–18h50</span><span class="pill pr">🚿 18h50–19h</span></td></tr>
-      <tr><td><div class="dn">🟦 Mardi</div></td><td><span class="mono">🏠 17h25</span></td><td><span class="pill pgr">🚌 17h–17h25</span><span class="pill po">🍎 17h25–17h45</span><span class="pill pb">📝 17h45–18h35</span><span class="pill pg">📈 18h35–18h45</span><span class="pill pp">🎒 18h45–18h50</span><span class="pill pr">🚿 18h50–19h</span></td></tr>
+      <tr><td><div class="dn">🟦 Lundi</div></td><td><span class="mono">🏠 18h25</span></td><td><span class="pill pgr">🚌 18h–18h25</span><span class="pill po">🍎 18h25–18h35</span><span class="pill pb">📝 18h35–19h10</span><span class="pill pp">🎒 19h10–19h20</span><span class="pill pr">🚿 19h20–19h30</span></td></tr>
+      <tr><td><div class="dn">🟦 Mardi</div></td><td><span class="mono">🏠 18h25</span></td><td><span class="pill pgr">🚌 18h–18h25</span><span class="pill po">🍎 18h25–18h35</span><span class="pill pb">📝 18h35–19h10</span><span class="pill pp">🎒 19h10–19h20</span><span class="pill pr">🚿 19h20–19h30</span></td></tr>
       <tr><td><div class="dn">🟩 Mercredi</div><div class="mono">🇺🇸 US</div></td><td><span class="mono">🏠 12h55</span></td><td><span class="pill pgr">🚌 12h30–12h55</span><span class="pill po">🍽️ 12h55–13h30</span><span class="pill pb">📝 13h30–15h</span><span class="pill pgr">☕ 15h–15h30</span><span class="pill pus">📈 15h30–17h30 🇺🇸</span><span class="pill pg">📊 17h30–17h40</span><span class="pill pgr">🎮 17h40–18h30</span><span class="pill pp">🎒 18h30–18h45</span><span class="pill pr">🚿 18h45–19h</span></td></tr>
-      <tr><td><div class="dn">🟦 Jeudi A</div></td><td><span class="mono">🏠 17h25</span></td><td><span class="pill pgr">🚌 17h–17h25</span><span class="pill po">🍎 17h25–17h45</span><span class="pill pb">📝 17h45–18h35</span><span class="pill pg">📈 18h35–18h45</span><span class="pill pp">🎒 18h45–18h50</span><span class="pill pr">🚿 18h50–19h</span></td></tr>
+      <tr><td><div class="dn">🟦 Jeudi A</div></td><td><span class="mono">🏠 17h25</span></td><td><span class="pill pgr">🚌 17h–17h25</span><span class="pill po">🍎 17h25–17h45</span><span class="pill pb">📝 17h45–18h35</span><span class="pill pg">📈 18h35–18h45</span><span class="pill pp">🎒 18h45–18h52</span><span class="pill pr">🚿 18h52–19h</span></td></tr>
       <tr><td><div class="dn">🟦 Jeudi B</div></td><td><span class="mono">🏠 18h25</span></td><td><span class="pill pgr">🚌 18h–18h25</span><span class="pill po">🍎 18h25–18h35</span><span class="pill pp">🎒 18h35–18h45</span><span class="pill pr">🚿 18h45–19h !</span><span class="pill pgr">📝 devoirs → ven.</span></td></tr>
       <tr><td><div class="dn">🟨 Vendredi</div></td><td><span class="mono">🏠 16h25</span></td><td><span class="pill pgr">🚌 16h–16h25</span><span class="pill po">🍎 16h25–16h45</span><span class="pill pb">📝 16h45–17h45</span><span class="pill pg">📈 17h45–18h</span><span class="pill pgr">🎮 18h–18h30</span><span class="pill pp">🎒 18h30–18h45</span><span class="pill pr">🚿 18h45–19h</span></td></tr>
     </tbody>
@@ -531,15 +531,24 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);font-s
 // ══ DONNÉES PLANNING PAR JOUR ══
 // Chaque jour = liste de tâches avec {label, dur (secondes), color, btnColor}
 const DAY_TASKS = {
-  // Lundi (1), Mardi (2), Jeudi A (4)
+  // Lundi (1), Mardi (2) — fin 18h, arrivée 18h25, douche avant 19h30
+  lundi_mardi: [
+    {label:'🍎 Goûter rapide',        dur:10*60, color:'#ED8936', btn:'#ED8936'},
+    {label:'📝 Devoirs',              dur:35*60, color:'#4299E1', btn:'#4299E1'},
+    {label:'🎒 Préparer le sac',      dur: 5*60, color:'#805AD5', btn:'#805AD5'},
+    {label:'📋 Vérifier les devoirs', dur: 5*60, color:'#2B6CB0', btn:'#2B6CB0'},
+    {label:'👕 Préparer les habits',  dur: 5*60, color:'#553C9A', btn:'#553C9A'},
+    {label:'🚿 Douche AVANT 19h30 !', dur:10*60, color:'#E53E3E', btn:'#E53E3E'},
+  ],
+  // Jeudi A (4) — fin 17h, arrivée 17h25, douche avant 19h
   standard: [
-    {label:'🍎 Goûter + pause',      dur:20*60, color:'#ED8936', btn:'#ED8936'},
-    {label:'📝 Devoirs',             dur:50*60, color:'#4299E1', btn:'#4299E1'},
-    {label:'📈 Trading (10 min)',    dur:10*60, color:'#38A169', btn:'#38A169'},
-    {label:'🎒 Préparer le sac',     dur: 5*60, color:'#805AD5', btn:'#805AD5'},
-    {label:'📋 Vérifier les devoirs',dur: 5*60, color:'#2B6CB0', btn:'#2B6CB0'},
-    {label:'👕 Préparer les habits', dur: 5*60, color:'#553C9A', btn:'#553C9A'},
-    {label:'🚿 Douche AVANT 19h !',  dur:10*60, color:'#E53E3E', btn:'#E53E3E'},
+    {label:'🍎 Goûter + pause',       dur:20*60, color:'#ED8936', btn:'#ED8936'},
+    {label:'📝 Devoirs',              dur:50*60, color:'#4299E1', btn:'#4299E1'},
+    {label:'📈 Trading (10 min)',     dur:10*60, color:'#38A169', btn:'#38A169'},
+    {label:'🎒 Préparer le sac',      dur: 5*60, color:'#805AD5', btn:'#805AD5'},
+    {label:'📋 Vérifier les devoirs', dur: 5*60, color:'#2B6CB0', btn:'#2B6CB0'},
+    {label:'👕 Préparer les habits',  dur: 5*60, color:'#553C9A', btn:'#553C9A'},
+    {label:'🚿 Douche AVANT 19h !',   dur:10*60, color:'#E53E3E', btn:'#E53E3E'},
   ],
   3: [ // Mercredi
     {label:'🍽️ Déjeuner + détente',  dur:35*60, color:'#ED8936', btn:'#ED8936'},
@@ -600,49 +609,47 @@ setInterval(updateClock,15000);
 
 // ══ ACCUEIL : blocs accordéon ══
 const BLOC_SCHED = {
-  1:[
-    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'17h00 → 17h25', tasks:[]},
-    {ico:'🍎',color:'c-gouter', title:'Goûter + pause',      time:'17h25 → 17h45', tasks:['🍎 Manger','📱 Décompresser 20 min']},
-    {ico:'📝',color:'c-devoirs',title:'Devoirs',             time:'17h45 → 18h35', tasks:['📝 Faire tous mes devoirs']},
-    {ico:'📈',color:'c-trading',title:'Coup d\'œil trading', time:'18h35 → 18h45', tasks:['📈 Regarder le site (10 min)']},
-    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'18h45 → 18h50', tasks:['🎒 Préparer le sac','📋 Vérifier agenda']},
-    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h !',  time:'18h50 → 19h00', tasks:['🚿 Douche ← AVANT 19H !']},
+  1:[ // LUNDI — fin 18h, arrivée 18h25
+    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'18h00 → 18h25', dur:0,    tasks:[]},
+    {ico:'🍎',color:'c-gouter', title:'Goûter rapide',       time:'18h25 → 18h35', dur:10*60,tasks:['🍎 Goûter rapide']},
+    {ico:'📝',color:'c-devoirs',title:'Devoirs',             time:'18h35 → 19h10', dur:35*60,tasks:['📝 Faire les devoirs prioritaires']},
+    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'19h10 → 19h20', dur:10*60,tasks:['🎒 Préparer le sac','📋 Vérifier agenda','👕 Habits demain']},
+    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h30 !',time:'19h20 → 19h30', dur:10*60,tasks:['🚿 Douche ← AVANT 19H30 !']},
   ],
-  2:[
-    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'17h00 → 17h25', tasks:[]},
-    {ico:'🍎',color:'c-gouter', title:'Goûter + pause',      time:'17h25 → 17h45', tasks:['🍎 Manger','📱 Décompresser 20 min']},
-    {ico:'📝',color:'c-devoirs',title:'Devoirs',             time:'17h45 → 18h35', tasks:['📝 Faire tous mes devoirs']},
-    {ico:'📈',color:'c-trading',title:'Coup d\'œil trading', time:'18h35 → 18h45', tasks:['📈 Regarder le site (10 min)']},
-    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'18h45 → 18h50', tasks:['🎒 Préparer le sac','📋 Vérifier agenda']},
-    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h !',  time:'18h50 → 19h00', tasks:['🚿 Douche ← AVANT 19H !']},
+  2:[ // MARDI — fin 18h, arrivée 18h25
+    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'18h00 → 18h25', dur:0,    tasks:[]},
+    {ico:'🍎',color:'c-gouter', title:'Goûter rapide',       time:'18h25 → 18h35', dur:10*60,tasks:['🍎 Goûter rapide']},
+    {ico:'📝',color:'c-devoirs',title:'Devoirs',             time:'18h35 → 19h10', dur:35*60,tasks:['📝 Faire les devoirs prioritaires']},
+    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'19h10 → 19h20', dur:10*60,tasks:['🎒 Préparer le sac','📋 Vérifier agenda','👕 Habits demain']},
+    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h30 !',time:'19h20 → 19h30', dur:10*60,tasks:['🚿 Douche ← AVANT 19H30 !']},
   ],
-  3:[
-    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'12h30 → 12h55', tasks:[]},
-    {ico:'🍽️',color:'c-gouter', title:'Déjeuner',            time:'12h55 → 13h30', tasks:['🍽️ Déjeuner','😌 Se détendre']},
-    {ico:'📝',color:'c-devoirs',title:'Devoirs',             time:'13h30 → 15h00', tasks:['📝 Faire tous mes devoirs']},
-    {ico:'☕',color:'c-libre',  title:'Pause avant session', time:'15h00 → 15h30', tasks:['☕ Se préparer']},
-    {ico:'📈',color:'c-us',     title:'🇺🇸 Session US',      time:'15h30 → 17h30', tasks:['📈 Ouvrir le site','🔍 Analyser les opportunités','📊 Prendre des notes']},
-    {ico:'📊',color:'c-bilan',  title:'Bilan de session',    time:'17h30 → 17h40', tasks:['📊 Écrire le bilan (10 min)']},
-    {ico:'🎮',color:'c-libre',  title:'Temps libre',         time:'17h40 → 18h30', tasks:['🎮 Temps libre !']},
-    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'18h30 → 18h45', tasks:['🎒 Préparer le sac','📋 Vérifier agenda']},
-    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h !',  time:'18h45 → 19h00', tasks:['🚿 Douche ← AVANT 19H !']},
+  3:[ // MERCREDI
+    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'12h30 → 12h55', dur:0,    tasks:[]},
+    {ico:'🍽️',color:'c-gouter', title:'Déjeuner',            time:'12h55 → 13h30', dur:35*60,tasks:['🍽️ Déjeuner','😌 Se détendre']},
+    {ico:'📝',color:'c-devoirs',title:'Devoirs',             time:'13h30 → 15h00', dur:90*60,tasks:['📝 Faire tous mes devoirs']},
+    {ico:'☕',color:'c-libre',  title:'Pause avant session', time:'15h00 → 15h30', dur:30*60,tasks:['☕ Se préparer pour la session']},
+    {ico:'📈',color:'c-us',     title:'🇺🇸 Session US',      time:'15h30 → 17h30', dur:120*60,tasks:['📈 Ouvrir le site','🔍 Analyser les opportunités','📊 Prendre des notes']},
+    {ico:'📊',color:'c-bilan',  title:'Bilan de session',   time:'17h30 → 17h40', dur:10*60,tasks:['📊 Écrire le bilan (10 min)']},
+    {ico:'🎮',color:'c-libre',  title:'Temps libre',         time:'17h40 → 18h30', dur:50*60,tasks:['🎮 Temps libre !']},
+    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'18h30 → 18h45', dur:15*60,tasks:['🎒 Préparer le sac','📋 Vérifier agenda','👕 Habits demain']},
+    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h !',  time:'18h45 → 19h00', dur:10*60,tasks:['🚿 Douche ← AVANT 19H !']},
   ],
-  4:[
-    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'17h00 → 17h25', tasks:[]},
-    {ico:'🍎',color:'c-gouter', title:'Goûter + pause',      time:'17h25 → 17h45', tasks:['🍎 Manger','📱 Décompresser 20 min']},
-    {ico:'📝',color:'c-devoirs',title:'Devoirs',             time:'17h45 → 18h35', tasks:['📝 Faire tous mes devoirs']},
-    {ico:'📈',color:'c-trading',title:'Coup d\'œil trading', time:'18h35 → 18h45', tasks:['📈 Regarder le site (10 min)']},
-    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'18h45 → 18h50', tasks:['🎒 Préparer le sac','📋 Vérifier agenda']},
-    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h !',  time:'18h50 → 19h00', tasks:['🚿 Douche ← AVANT 19H !']},
+  4:[ // JEUDI A — fin 17h, arrivée 17h25
+    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'17h00 → 17h25', dur:0,    tasks:[]},
+    {ico:'🍎',color:'c-gouter', title:'Goûter + pause',      time:'17h25 → 17h45', dur:20*60,tasks:['🍎 Manger','📱 Décompresser 20 min']},
+    {ico:'📝',color:'c-devoirs',title:'Devoirs',             time:'17h45 → 18h35', dur:50*60,tasks:['📝 Faire tous mes devoirs']},
+    {ico:'📈',color:'c-trading',title:'Coup d\'œil trading', time:'18h35 → 18h45', dur:10*60,tasks:['📈 Regarder le site (10 min)']},
+    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'18h45 → 18h52', dur:7*60, tasks:['🎒 Préparer le sac','📋 Vérifier agenda','👕 Habits demain']},
+    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h !',  time:'18h52 → 19h00', dur:8*60, tasks:['🚿 Douche ← AVANT 19H !']},
   ],
-  5:[
-    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'16h00 → 16h25', tasks:[]},
-    {ico:'🍎',color:'c-gouter', title:'Goûter + pause',      time:'16h25 → 16h45', tasks:['🍎 Manger','📱 Décompresser']},
-    {ico:'📝',color:'c-devoirs',title:'Devoirs + révisions', time:'16h45 → 17h45', tasks:['📝 Devoirs + révisions week-end']},
-    {ico:'📈',color:'c-trading',title:'Trading',             time:'17h45 → 18h00', tasks:['📈 Regarder le site']},
-    {ico:'🎮',color:'c-libre',  title:'Temps libre',         time:'18h00 → 18h30', tasks:['🎮 Temps libre !']},
-    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'18h30 → 18h45', tasks:['🎒 Préparer le sac','📋 Vérifier agenda']},
-    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h !',  time:'18h45 → 19h00', tasks:['🚿 Douche ← AVANT 19H !']},
+  5:[ // VENDREDI — fin 16h, arrivée 16h25
+    {ico:'🚌',color:'c-bus',    title:'Trajet bus',          time:'16h00 → 16h25', dur:0,    tasks:[]},
+    {ico:'🍎',color:'c-gouter', title:'Goûter + pause',      time:'16h25 → 16h45', dur:20*60,tasks:['🍎 Manger','📱 Décompresser']},
+    {ico:'📝',color:'c-devoirs',title:'Devoirs + révisions', time:'16h45 → 17h45', dur:60*60,tasks:['📝 Devoirs + révisions week-end']},
+    {ico:'📈',color:'c-trading',title:'Trading',             time:'17h45 → 18h00', dur:15*60,tasks:['📈 Regarder le site']},
+    {ico:'🎮',color:'c-libre',  title:'Temps libre',         time:'18h00 → 18h30', dur:30*60,tasks:['🎮 Temps libre !']},
+    {ico:'🎒',color:'c-sac',    title:'Préparer le sac',     time:'18h30 → 18h45', dur:15*60,tasks:['🎒 Préparer le sac','📋 Vérifier agenda','👕 Habits demain']},
+    {ico:'🚿',color:'c-douche', title:'Douche AVANT 19h !',  time:'18h45 → 19h00', dur:10*60,tasks:['🚿 Douche ← AVANT 19H !']},
   ]
 };
 
@@ -699,9 +706,16 @@ function buildHome(){
       return `<div class="chk" id="${tid}"><div class="chk-top"><div class="chk-box" onclick="chk('${tid}')"></div><span class="chk-label">${t}</span></div></div>`;
     }).join('');
 
+    // Timer si le bloc a une durée
+    const timerHtml=b.dur>0?`
+      <div class="chk-bot" style="margin-top:10px;">
+        <button class="btn-go" id="hbtn-${id}" style="background:${barColor};border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex:1;color:#fff;border:none;" onclick="startHomeTimer('${id}',${b.dur})">▶ Lancer le timer</button>
+        <span class="tdisp" id="htd-${id}" style="color:${barColor};">${Math.floor(b.dur/60)}:00</span>
+      </div>
+      <div class="pbar" style="margin-top:8px;"><div class="pfill" id="hpf-${id}" style="width:100%;background:${barColor};"></div></div>`:'';
+
     const div=document.createElement('div');
     div.className='bloc';
-    // Légère teinte de fond selon le jour si c'est le bloc actif
     if(isNow) div.style.boxShadow=`0 0 0 2px ${accent}40, var(--sh)`;
     div.innerHTML=`
       <div class="bloc-hdr" onclick="toggleB('${id}')">
@@ -715,9 +729,43 @@ function buildHome(){
       </div>
       <div class="bloc-body ${isNow?'open':''}" id="body${id}">
         <div class="checklist">${items}</div>
+        ${timerHtml}
       </div>`;
     container.appendChild(div);
   });
+}
+
+// ══ TIMERS ACCUEIL ══
+const homeTimers={};
+function startHomeTimer(id,total){
+  if(homeTimers[id]&&homeTimers[id].running){
+    clearInterval(homeTimers[id].iv);homeTimers[id].running=false;
+    document.getElementById('hbtn-'+id).textContent='▶ Reprendre';return;
+  }
+  if(!homeTimers[id])homeTimers[id]={rem:total};
+  homeTimers[id].running=true;
+  document.getElementById('hbtn-'+id).textContent='⏸ Pause';
+  homeTimers[id].iv=setInterval(()=>{
+    homeTimers[id].rem--;
+    const r=homeTimers[id].rem;
+    const td=document.getElementById('htd-'+id);
+    const pf=document.getElementById('hpf-'+id);
+    if(td)td.textContent=fmt(r);
+    if(pf)pf.style.width=(r/total*100)+'%';
+    if(r<=60&&td)td.classList.add('urgent');
+    if(r<=0){
+      clearInterval(homeTimers[id].iv);homeTimers[id].running=false;
+      bell();
+      const btn=document.getElementById('hbtn-'+id);
+      if(btn){btn.textContent='✅ Terminé !';btn.disabled=true;}
+      if(td)td.textContent='00:00';
+      // Cocher toutes les tâches du bloc
+      document.querySelectorAll(`[id^="${id}t"]`).forEach(el=>{
+        const box=el.querySelector('.chk-box');
+        if(box&&!box.classList.contains('checked')){box.classList.add('checked');box.textContent='✓';el.classList.add('done');}
+      });
+    }
+  },1000);
 }
 
 function toggleB(id){
@@ -746,6 +794,9 @@ function buildRoutine(){
   if(dow===4 && confirm('Jeudi semaine B (retour à 18h) ? → OK = oui, Annuler = semaine A')){
     tasks=DAY_TASKS.jeudi_b;
     document.getElementById('routine-sub').textContent='Jeudi Semaine B — arrivée 18h25';
+  } else if(dow===1||dow===2){
+    tasks=DAY_TASKS.lundi_mardi;
+    document.getElementById('routine-sub').textContent=`${dayName} — douche avant 19h30`;
   } else {
     tasks=DAY_TASKS[dow]||DAY_TASKS.standard;
     document.getElementById('routine-sub').textContent=`${dayName} — timers du soir`;
@@ -1004,8 +1055,9 @@ function openClaudeWithDevoirs(){
   // Week-end : temps libre, pas de contrainte horaire stricte
   const devoirsTime=info?info.devoirsTime:'autant que nécessaire';
   const arrivee=info?info.arrivee:null;
+  const douche=info?info.douche:'avant 19h';
   const contexte=info
-    ? `Je rentre à la maison vers ${arrivee} et je dois avoir pris ma douche avant 19h00 (règle absolue).\nJ'ai exactement ${devoirsTime} pour faire mes devoirs.${info.note?'\nInfo : '+info.note:''}`
+    ? `Je rentre à la maison vers ${arrivee} et je dois avoir pris ma douche avant ${douche} (règle absolue).\nJ'ai exactement ${devoirsTime} pour faire mes devoirs.${info.note?'\nInfo : '+info.note:''}`
     : `C'est le week-end, j'ai plus de temps mais je veux quand même avancer efficacement.`;
 
   const prompt=`Bonjour Claude ! Je suis en classe de 4e en France.
@@ -1036,67 +1088,33 @@ Sois court et direct !`;
 // Programme complet par jour avec toutes les durées
 const DAY_SCHEDULE_DETAIL = {
   1: {
-    arrivee: '17h25',
-    programme: `- 🍎 Goûter + pause : 20 min (17h25–17h45)
-- 📝 Devoirs : 50 min (17h45–18h35)
-- 📈 Trading : 10 min (18h35–18h45)
-- 🎒 Préparer le sac : 5 min
-- 📋 Vérifier les devoirs : 5 min
-- 👕 Préparer les habits : 5 min
-- 🚿 Douche : 10 min (avant 19h00 impératif)`,
-    devoirsTime: '50 minutes',
+    arrivee: '18h25',
+    devoirsTime: '35 minutes',
+    douche: '19h30',
     note: ''
   },
   2: {
-    arrivee: '17h25',
-    programme: `- 🍎 Goûter + pause : 20 min (17h25–17h45)
-- 📝 Devoirs : 50 min (17h45–18h35)
-- 📈 Trading : 10 min (18h35–18h45)
-- 🎒 Préparer le sac : 5 min
-- 📋 Vérifier les devoirs : 5 min
-- 👕 Préparer les habits : 5 min
-- 🚿 Douche : 10 min (avant 19h00 impératif)`,
-    devoirsTime: '50 minutes',
+    arrivee: '18h25',
+    devoirsTime: '35 minutes',
+    douche: '19h30',
     note: ''
   },
   3: {
     arrivee: '12h55',
-    programme: `- 🍽️ Déjeuner + détente : 35 min (12h55–13h30)
-- 📝 Devoirs : 1h30 (13h30–15h00)
-- ☕ Pause avant session : 30 min (15h00–15h30)
-- 📈 Session US (trading) : 2h (15h30–17h30)
-- 📊 Bilan de session : 10 min (17h30–17h40)
-- 🎮 Temps libre : 50 min (17h40–18h30)
-- 🎒 Préparer le sac : 5 min
-- 📋 Vérifier les devoirs : 5 min
-- 👕 Préparer les habits : 5 min
-- 🚿 Douche : 10 min (avant 19h00 impératif)`,
     devoirsTime: '1h30',
+    douche: '19h00',
     note: 'Le mercredi je dois aussi trader la session US américaine de 15h30 à 17h30.'
   },
   4: {
     arrivee: '17h25',
-    programme: `- 🍎 Goûter + pause : 20 min (17h25–17h45)
-- 📝 Devoirs : 50 min (17h45–18h35)
-- 📈 Trading : 10 min (18h35–18h45)
-- 🎒 Préparer le sac : 5 min
-- 📋 Vérifier les devoirs : 5 min
-- 👕 Préparer les habits : 5 min
-- 🚿 Douche : 10 min (avant 19h00 impératif)`,
     devoirsTime: '50 minutes',
+    douche: '19h00',
     note: ''
   },
   5: {
     arrivee: '16h25',
-    programme: `- 🍎 Goûter + pause : 20 min (16h25–16h45)
-- 📝 Devoirs + révisions : 1h (16h45–17h45)
-- 📈 Trading : 15 min (17h45–18h00)
-- 🎮 Temps libre : 30 min (18h00–18h30)
-- 🎒 Préparer le sac : 5 min
-- 📋 Vérifier les devoirs : 5 min
-- 👕 Préparer les habits : 5 min
-- 🚿 Douche : 10 min (avant 19h00 impératif)`,
     devoirsTime: '1 heure',
+    douche: '19h00',
     note: ''
   }
 };
