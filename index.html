@@ -574,11 +574,11 @@ const DAY_TASKS = {
   ],
   // Jeudi B = spécial (peu de temps)
   jeudi_b: [
-    {label:'🍎 Goûter rapide',       dur:10*60, color:'#ED8936', btn:'#ED8936'},
+    {label:'🍎 Goûter rapide',              dur:10*60, color:'#ED8936', btn:'#ED8936'},
     {label:'🎒 Préparer le sac EN PRIORITÉ', dur:10*60, color:'#805AD5', btn:'#805AD5'},
-    {label:'📋 Vérifier les devoirs',dur: 5*60, color:'#2B6CB0', btn:'#2B6CB0'},
-    {label:'👕 Préparer les habits', dur: 5*60, color:'#553C9A', btn:'#553C9A'},
-    {label:'🚿 Douche AVANT 19h !',  dur:10*60, color:'#E53E3E', btn:'#E53E3E'},
+    {label:'📋 Vérifier les devoirs',        dur: 5*60, color:'#2B6CB0', btn:'#2B6CB0'},
+    {label:'👕 Préparer les habits',         dur: 5*60, color:'#553C9A', btn:'#553C9A'},
+    {label:'🚿 Douche AVANT 19h30 !',        dur:10*60, color:'#E53E3E', btn:'#E53E3E'},
   ]
 };
 
@@ -687,7 +687,16 @@ function buildHome(){
     container.innerHTML=`<div class="weekend-card"><h2>🎉 Week-end !</h2><p>Profite bien.<br>Les blocs reviennent lundi.</p></div>`;
     return;
   }
-  bdg.textContent='🚿 Douche avant 19h !'; bdg.className='today-bdg red';
+  bdg.textContent= (dow===1||dow===2) ? '🚿 Douche avant 19h30 !' : '🚿 Douche avant 19h !';
+  bdg.className='today-bdg red';
+
+  // Pour jeudi, on met à jour le badge après confirmation semaine B
+  if(dow===4){
+    setTimeout(()=>{
+      const b=document.getElementById('today-bdg');
+      if(b&&window._jeudiB) b.textContent='🚿 Douche avant 19h30 !';
+    },100);
+  }
 
   const accent=dc?dc.accent:'#2B6CB0';
   const blocs=BLOC_SCHED[dow]||[];
@@ -793,7 +802,8 @@ function buildRoutine(){
 
   if(dow===4 && confirm('Jeudi semaine B (retour à 18h) ? → OK = oui, Annuler = semaine A')){
     tasks=DAY_TASKS.jeudi_b;
-    document.getElementById('routine-sub').textContent='Jeudi Semaine B — arrivée 18h25';
+    window._jeudiB=true;
+    document.getElementById('routine-sub').textContent='Jeudi Semaine B — douche avant 19h30';
   } else if(dow===1||dow===2){
     tasks=DAY_TASKS.lundi_mardi;
     document.getElementById('routine-sub').textContent=`${dayName} — douche avant 19h30`;
@@ -1343,8 +1353,12 @@ setInterval(updateCountdown,60000);
 // ══ NOTIFICATIONS ══
 let notifTimers={};
 const NOTIF_CONFIG={
-  douche:{time:'18:45',msg:'🚿 Douche avant 19h !',days:[1,2,3,4,5]},
-  devoirs:{time:null,msgs:{1:'17:45',2:'17:45',3:'13:30',4:'17:45',5:'16:45'},msg:'📝 C\'est l\'heure des devoirs !',days:[1,2,3,4,5]}
+  douche:{
+    times:{1:'19:20',2:'19:20',3:'18:45',4:'18:45',5:'18:45'},
+    msgs:{1:'🚿 Douche avant 19h30 !',2:'🚿 Douche avant 19h30 !',3:'🚿 Douche avant 19h !',4:'🚿 Douche avant 19h !',5:'🚿 Douche avant 19h !'},
+    days:[1,2,3,4,5]
+  },
+  devoirs:{times:{1:'18:35',2:'18:35',3:'13:30',4:'17:45',5:'16:45'},msg:'📝 C\'est l\'heure des devoirs !',days:[1,2,3,4,5]}
 };
 
 function toggleNotif(key,btn){
@@ -1370,8 +1384,10 @@ function scheduleNotif(key){
   const dow=now.getDay();
   const cfg=NOTIF_CONFIG[key];
   if(!cfg.days.includes(dow)) return;
-  let timeStr=cfg.time;
-  if(!timeStr&&cfg.msgs) timeStr=cfg.msgs[dow];
+  const isJeudiB=dow===4&&window._jeudiB;
+  let timeStr=cfg.times?cfg.times[dow]:null;
+  let msg=cfg.msgs?cfg.msgs[dow]:cfg.msg;
+  if(isJeudiB&&key==='douche'){timeStr='19:20';msg='🚿 Douche avant 19h30 !';}
   if(!timeStr) return;
   const [h,m]=timeStr.split(':').map(Number);
   const target=new Date();target.setHours(h,m,0,0);
@@ -1379,7 +1395,7 @@ function scheduleNotif(key){
   if(diff<=0) return;
   notifTimers[key]=setTimeout(()=>{
     if(Notification.permission==='granted'){
-      new Notification('📚 Collège + Trading',{body:cfg.msg,icon:''});
+      new Notification('📚 Collège + Trading',{body:msg});
     }
   },diff);
 }
